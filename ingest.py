@@ -88,7 +88,7 @@ async def main(test: bool = False, reset: bool = False):
     for i, pdf_path in enumerate(remaining, 1):
         logger.info(f"[{i}/{len(remaining)}] {pdf_path.name}")
         try:
-            await rag.insert_documents(file_path=str(pdf_path))
+            await rag.process_document_complete(file_path=str(pdf_path))
             ingested.add(str(pdf_path))
             save_progress(ingested)
             logger.info(f"  ✓ Done: {pdf_path.name}")

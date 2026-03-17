@@ -12,7 +12,7 @@ RAG_STORAGE_DIR = BASE_DIR / "rag_storage"
 LLM_MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT_LLM", "gpt-4o-mini")
 VISION_MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT_VISION", "gpt-4o")
 EMBEDDING_MODEL = os.getenv("AZURE_OPENAI_DEPLOYMENT_EMBEDDING", "text-embedding-3-large")
-EMBEDDING_DIM = 3072  # Fixed dimension for text-embedding-3-large
+EMBEDDING_DIM = int(os.getenv("AZURE_OPENAI_EMBEDDING_DIM", "1536"))  # 1536 for text-embedding-3-small, 3072 for text-embedding-3-large
 
 # Query defaults
 DEFAULT_TOP_K = 10
