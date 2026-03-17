@@ -1,0 +1,21 @@
+# Secrets
+.env
+
+# Generated RAG index (rebuild with ingest.py)
+rag_storage/
+
+# Source PDFs — store locally or in a shared drive, not in git
+papers/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# MinerU / HuggingFace cache
+.cache/
+
+# OS
+.DS_Store
