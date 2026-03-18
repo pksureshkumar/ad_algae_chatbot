@@ -1,6 +1,7 @@
 import os
 import base64
 import logging
+import numpy as np
 from openai import AsyncAzureOpenAI
 from lightrag.utils import EmbeddingFunc
 from dotenv import load_dotenv
@@ -66,7 +67,7 @@ async def _raw_embedding_func(texts: list[str]) -> list[list[float]]:
         input=texts,
         encoding_format="float",
     )
-    return [item.embedding for item in response.data]
+    return np.array([item.embedding for item in response.data])
 
 
 # LightRAG requires the embedding callable to be wrapped in EmbeddingFunc
