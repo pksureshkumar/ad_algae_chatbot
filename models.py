@@ -93,9 +93,22 @@ async def vision_model_func(
             history_messages=history_messages,
         )
 
-    # Build the image content block — accept data URIs, HTTP URLs, or local paths.
+    # Build the image content block — accept data URIs, HTTP URLs, local paths,
+    # or raw base64 strings (RAGAnything passes base64 without a data: prefix).
     if image_data.startswith(("data:", "http://", "https://")):
         image_url = image_data
+    elif len(image_data) > 260 or not any(c in image_data for c in ("/", "\\", ".")):
+        # Looks like a raw base64 string rather than a file path.
+        # JPEG base64 starts with /9j/; PNG with iVBOR; default to jpeg.
+        if image_data.startswith("iVBOR"):
+            mime = "png"
+        elif image_data.startswith("R0lGOD"):
+            mime = "gif"
+        elif image_data.startswith("UklGR"):
+            mime = "webp"
+        else:
+            mime = "jpeg"
+        image_url = f"data:image/{mime};base64,{image_data}"
     else:
         # Local file path — encode to a base64 data URI.
         try:
@@ -106,7 +119,7 @@ async def vision_model_func(
                     "gif": "gif", "webp": "webp"}.get(ext, "jpeg")
             image_url = f"data:image/{mime};base64,{b64}"
         except Exception as e:
-            logger.warning(f"Could not load image {image_data}: {e}. Falling back to text-only.")
+            logger.warning(f"Could not load image {image_data[:80]}...: {e}. Falling back to text-only.")
             return await llm_model_func(
                 prompt,
                 system_prompt=system_prompt,
