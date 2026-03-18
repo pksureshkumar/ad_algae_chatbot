@@ -12,12 +12,16 @@ In-session commands:
 
 import asyncio
 import logging
+import textwrap
+from collections import defaultdict
 
 from lightrag import QueryParam
 from raganything import RAGAnything
 
 from config import RAG_CONFIG, RAG_STORAGE_DIR, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE
 from models import llm_model_func, embedding_func, vision_model_func
+
+EXCERPT_LEN = 300  # characters shown per chunk excerpt
 
 
 def check_index():
@@ -27,6 +31,31 @@ def check_index():
             "\n[WARNING] rag_storage/ is empty or missing.\n"
             "Run `python ingest.py` first to build the knowledge base.\n"
         )
+
+
+def format_sources(sources: dict) -> str:
+    """Format retrieved chunks grouped by source file with short excerpts."""
+    chunks = sources.get("data", {}).get("chunks", [])
+    if not chunks:
+        return ""
+
+    # Group chunks by filename, preserving first-seen order.
+    by_file = defaultdict(list)
+    for chunk in chunks:
+        fname = (chunk.get("file_path") or "").split("/")[-1]
+        if fname:
+            by_file[fname].append(chunk.get("content", "").strip())
+
+    lines = ["\nSources:"]
+    for i, (fname, contents) in enumerate(by_file.items(), 1):
+        lines.append(f"\n  [{i}] {fname}")
+        for content in contents:
+            excerpt = " ".join(content.split())[:EXCERPT_LEN]
+            if len(content) > EXCERPT_LEN:
+                excerpt += "..."
+            for line in textwrap.wrap(excerpt, width=76, initial_indent="      ", subsequent_indent="      "):
+                lines.append(line)
+    return "\n".join(lines)
 
 
 async def main():
@@ -94,18 +123,7 @@ async def main():
                 rag.lightrag.aquery_data(user_input, param=param),
             )
             print(answer)
-
-            refs = sources.get("data", {}).get("references", [])
-            file_names = sorted({
-                ref["file_path"].split("/")[-1]
-                for ref in refs
-                if ref.get("file_path")
-            })
-            if file_names:
-                print("\nSources:")
-                for name in file_names:
-                    print(f"  - {name}")
-
+            print(format_sources(sources))
         except Exception as e:
             print(f"[Error: {e}]")
 
