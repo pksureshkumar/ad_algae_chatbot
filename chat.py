@@ -13,6 +13,7 @@ In-session commands:
 import asyncio
 import logging
 
+from lightrag import QueryParam
 from raganything import RAGAnything
 
 from config import RAG_CONFIG, RAG_STORAGE_DIR, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE
@@ -87,12 +88,24 @@ async def main():
 
         print("\nAssistant: ", end="", flush=True)
         try:
-            response = await rag.aquery(
-                query=user_input,
-                top_k=top_k,
-                search_mode=search_mode,
+            param = QueryParam(mode=search_mode, top_k=top_k)
+            answer, sources = await asyncio.gather(
+                rag.aquery(query=user_input, top_k=top_k, search_mode=search_mode),
+                rag.lightrag.aquery_data(user_input, param=param),
             )
-            print(response)
+            print(answer)
+
+            refs = sources.get("data", {}).get("references", [])
+            file_names = sorted({
+                ref["file_path"].split("/")[-1]
+                for ref in refs
+                if ref.get("file_path")
+            })
+            if file_names:
+                print("\nSources:")
+                for name in file_names:
+                    print(f"  - {name}")
+
         except Exception as e:
             print(f"[Error: {e}]")
 

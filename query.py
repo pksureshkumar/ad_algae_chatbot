@@ -12,6 +12,7 @@ import asyncio
 import logging
 import argparse
 
+from lightrag import QueryParam
 from raganything import RAGAnything
 
 from config import RAG_CONFIG, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE
@@ -28,8 +29,26 @@ async def main(query: str, search_mode: str, top_k: int):
         vision_model_func=vision_model_func,
     )
 
-    response = await rag.aquery(query=query, top_k=top_k, search_mode=search_mode)
-    print(response)
+    param = QueryParam(mode=search_mode, top_k=top_k)
+
+    answer, sources = await asyncio.gather(
+        rag.aquery(query=query, top_k=top_k, search_mode=search_mode),
+        rag.lightrag.aquery_data(query, param=param),
+    )
+
+    print(answer)
+
+    # Extract unique source file names from the references list.
+    refs = sources.get("data", {}).get("references", [])
+    file_names = sorted({
+        ref["file_path"].split("/")[-1]
+        for ref in refs
+        if ref.get("file_path")
+    })
+    if file_names:
+        print("\nSources:")
+        for name in file_names:
+            print(f"  - {name}")
 
     await rag.finalize_storages()
 
