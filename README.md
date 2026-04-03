@@ -9,7 +9,7 @@ This is a research chatbot for **anaerobic digestion (AD), algae cultivation, an
 ```
 ad_algae_chatbot/
 ├── papers/               # 141 PDFs (source knowledge base — do not modify)
-├── rag_storage/          # Azure pipeline index (7.1 GB — do not edit manually)
+├── rag_storage/          # Azure pipeline index (built through ingest.py; do not edit manually)
 ├── output/               # Query results (batch_results_final.md + per-paper MinerU folders)
 ├── config.py             # All settings: models, paths, RAGAnythingConfig, system prompt
 ├── models.py             # Async LLM, embedding, and vision model functions (Azure)
