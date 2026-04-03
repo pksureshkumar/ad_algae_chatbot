@@ -7,6 +7,7 @@ rag_storage_v2/
 
 # Claude Code session files
 .claude/
+CLAUDE.md
 
 # Source PDFs — store locally or in a shared drive, not in git
 papers/

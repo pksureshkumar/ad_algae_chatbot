@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AD/Algae Chatbot
 
 ## Project Overview
 
