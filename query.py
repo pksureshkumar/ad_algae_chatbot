@@ -58,12 +58,11 @@ async def main(query: str, search_mode: str, top_k: int):
         vision_model_func=vision_model_func,
     )
 
+    await rag._ensure_lightrag_initialized()
     param = QueryParam(mode=search_mode, top_k=top_k)
 
-    answer, sources = await asyncio.gather(
-        rag.aquery(query=query, top_k=top_k, search_mode=search_mode),
-        rag.lightrag.aquery_data(query, param=param),
-    )
+    answer = await rag.aquery(query=query, mode=search_mode, vlm_enhanced=False)
+    sources = await rag.lightrag.aquery_data(query, param=param)
 
     print(answer)
     print(format_sources(sources))

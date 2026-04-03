@@ -3,6 +3,10 @@
 
 # Generated RAG index (rebuild with ingest.py)
 rag_storage/
+rag_storage_v2/
+
+# Claude Code session files
+.claude/
 
 # Source PDFs — store locally or in a shared drive, not in git
 papers/
@@ -16,6 +20,9 @@ venv/
 
 # MinerU / HuggingFace cache
 .cache/
+
+# MinerU per-paper parse output (images + JSON — large binary files)
+output/*/
 
 # OS
 .DS_Store

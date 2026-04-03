@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 from config import LLM_MODEL, VISION_MODEL, EMBEDDING_MODEL, EMBEDDING_DIM, DOMAIN_SYSTEM_PROMPT
 
-load_dotenv()
+load_dotenv(override=True)
 
 logger = logging.getLogger(__name__)
 

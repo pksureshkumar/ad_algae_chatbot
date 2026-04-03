@@ -78,6 +78,7 @@ async def main():
         embedding_func=embedding_func,
         vision_model_func=vision_model_func,
     )
+    await rag._ensure_lightrag_initialized()
 
     search_mode = DEFAULT_SEARCH_MODE
     top_k = DEFAULT_TOP_K
@@ -118,10 +119,8 @@ async def main():
         print("\nAssistant: ", end="", flush=True)
         try:
             param = QueryParam(mode=search_mode, top_k=top_k)
-            answer, sources = await asyncio.gather(
-                rag.aquery(query=user_input, top_k=top_k, search_mode=search_mode),
-                rag.lightrag.aquery_data(user_input, param=param),
-            )
+            answer = await rag.aquery(query=user_input, mode=search_mode, vlm_enhanced=False)
+            sources = await rag.lightrag.aquery_data(user_input, param=param)
             print(answer)
             print(format_sources(sources))
         except Exception as e:
