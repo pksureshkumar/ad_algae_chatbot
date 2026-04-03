@@ -3,7 +3,6 @@
 
 # Generated RAG index (rebuild with ingest.py)
 rag_storage/
-rag_storage_v2/
 
 # Claude Code session files
 .claude/
