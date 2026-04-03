@@ -132,9 +132,8 @@ LightRAG is initialized lazily. Always call `await rag._ensure_lightrag_initiali
 
 ## Important Notes
 
-- **`rag_storage/` is generated data** — 7.1 GB, can be rebuilt by re-running `ingest.py` (~1 day). Do not manually edit files inside it.
+- **`rag_storage/` is generated data** — can be rebuilt by re-running `ingest.py` (~1 day). Do not manually edit files inside it.
 - **`papers/` is read-only** — ingest.py never modifies PDFs.
 - **MinerU model download** — happens automatically on the first `ingest.py` run. Models cached in `~/.cache/huggingface/`. Requires several GB of disk space.
 - **Azure API costs** — ingestion calls the Azure vision API for every extracted figure and table. Monitor usage on large runs.
 - **`.env` must never be committed** — listed in `.gitignore`.
-- **Transferring to another computer** — copy `rag_storage/` (7.1 GB), all `.py` files, `requirements.txt`, and `.env`. The `papers/` folder (468 MB) is only needed to re-ingest. `rag_storage/` is too large for GitHub — transfer via USB or Google Drive.
