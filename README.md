@@ -169,3 +169,29 @@ LightRAG is initialized lazily. Always call `await rag._ensure_lightrag_initiali
 - **No API costs** — the whole pipeline is local. The tradeoff is wall-clock time: a hosted API ingests in hours, local Ollama in days.
 - **Keep Ollama's models resident** — set `OLLAMA_KEEP_ALIVE=-1` before a long ingest so the LLM, vision, and embedding models are not repeatedly evicted and reloaded from disk.
 - **`.env` must never be committed** — listed in `.gitignore`.
+
+## License and scope
+
+The code in this repository is released under the MIT License (see `LICENSE`).
+
+The licence covers the **software only**. Three things it does not and cannot
+cover:
+
+- **The source papers.** The corpus consists of third-party peer-reviewed
+  articles, most behind paywalls. They are not redistributed here, and no
+  permission to use them is granted by this licence. `papers_metadata.json` and
+  `eval/corpus_paper_list.csv` list the DOIs so the papers can be obtained
+  legally from their publishers.
+- **Text copied out of those papers.** Retrieved chunk bodies and the pinned
+  verbatim passages used as ground truth are excluded from this repository for
+  that reason. `rag_benchmarking/runs_public/` and
+  `rag_benchmarking/data/ground_truth_public.jsonl` contain the same records
+  with the copied text removed — enough to audit every reported score, not
+  enough to reconstruct the sources. Anyone holding the corpus can regenerate
+  the full files with `build_dataset.py` and `run_arms.py`.
+- **The built index.** `rag_storage/` is derived from the papers and is not
+  published here.
+
+Upstream components carry their own licences, including RAG-Anything, LightRAG,
+MinerU, and the Ollama models (`qwen3`, `qwen2.5vl`, `bge-m3`, `gemma3`,
+`phi4`). Check each before redistributing a deployment.
