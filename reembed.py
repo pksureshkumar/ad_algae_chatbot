@@ -7,7 +7,8 @@ OLLAMA_EMBEDDING_MODEL, leaving all other content untouched. The knowledge graph
 vectors change, so the corpus survives intact.
 
 Why this exists instead of `ingest.py --reset`:
-  - The index covers 282 papers, but only 157 of those PDFs exist locally.
+  - The index covers 282 papers. 157 PDFs sit in papers/, but one of those was never
+    indexed, so only 156 of the indexed papers have a local PDF.
     A re-ingest would silently shrink the corpus to whatever is in papers/.
   - Re-embedding takes hours; re-ingesting takes weeks.
 
