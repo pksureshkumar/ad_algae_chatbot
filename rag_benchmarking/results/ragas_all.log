@@ -1,0 +1,104 @@
+
+################ multimodal  (15:59:53) ################
+wrote C:\data\pavan\ad_algae_chatbot\rag_benchmarking\results\multimodal.ragas.csv
+
+  non_llm_context_precision_with_reference   0.0937
+
+  non_llm_context_recall                     0.1250
+
+  id_based_context_precision                 0.3822
+
+  id_based_context_recall                    0.9375
+
+  faithfulness                               0.9785
+
+  answer_relevancy                           0.6573
+
+---- multimodal done at 16:09:45 ----
+
+################ text_only  (16:09:45) ################
+wrote C:\data\pavan\ad_algae_chatbot\rag_benchmarking\results\text_only.ragas.csv
+
+  non_llm_context_precision_with_reference   0.0000
+
+  non_llm_context_recall                     0.0000
+
+  id_based_context_precision                 0.2540
+
+  id_based_context_recall                    0.8125
+
+  faithfulness                               0.7882
+
+  answer_relevancy                           0.2122
+
+---- text_only done at 16:16:10 ----
+
+################ no_retrieval  (16:16:10) ################
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+
+
+
+
+wrote C:\data\pavan\ad_algae_chatbot\rag_benchmarking\results\no_retrieval.ragas.csv
+
+  answer_relevancy                           0.5899
+
+---- no_retrieval done at 16:16:46 ----
+
+################ gemma3_no_retrieval  (16:16:46) ################
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+
+
+
+
+wrote C:\data\pavan\ad_algae_chatbot\rag_benchmarking\results\gemma3_no_retrieval.ragas.csv
+
+  answer_relevancy                           0.8606
+
+---- gemma3_no_retrieval done at 16:18:09 ----
+
+################ gpt_strict  (16:18:09) ################
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+
+
+
+
+wrote C:\data\pavan\ad_algae_chatbot\rag_benchmarking\results\gpt_strict.ragas.csv
+
+  answer_relevancy                           0.0000
+
+---- gpt_strict done at 16:19:29 ----
+
+################ gpt_websearch  (16:19:29) ################
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+LLM returned 1 generations instead of requested 3. Proceeding with 1 generations.
+
+
+
+
+
+wrote C:\data\pavan\ad_algae_chatbot\rag_benchmarking\results\gpt_websearch.ragas.csv
+
+  answer_relevancy                           0.5176
+
+---- gpt_websearch done at 16:20:42 ----
+
+ALL ARMS COMPLETE

@@ -26,3 +26,41 @@ output/*/
 
 # OS
 .DS_Store
+.tiktoken_cache/
+
+# Ad-hoc scratch scripts
+scratch/
+
+# ── Not for a public repository ──────────────────────────────────────────────
+# Manuscript under review + confidential peer-review correspondence. Co-authored,
+# so not ours alone to publish, and journals treat leaking review material as a
+# breach. Keep local.
+docs/
+
+# Source PDFs for the benchmark papers: 12 of 13 are paywalled.
+rag_benchmarking/additional_ingestation_papers/
+
+# Python virtualenv for the ragas scoring stage (~600 MB).
+rag_benchmarking/.venv-ragas/
+
+# Run files embed every retrieved chunk verbatim (1.4 MB from paywalled
+# sources). Publish runs_public/ instead — same records, chunk bodies removed.
+rag_benchmarking/runs/
+
+# Large generated artefacts and logs
+output/extraction_checkpoint.json
+output/*.log
+rag_benchmarking/results/*.ragas.csv
+*.prerepair
+*.bak
+
+# Ground-truth spreadsheets and the working dataset: the verbatim_passage /
+# reference_contexts fields are text copied out of the source papers, most of
+# which are paywalled. Published instead: data/ground_truth_public.jsonl and
+# runs_public/, which keep the questions, the paraphrased ideal answers, the
+# numeric gold values, strata, DOIs and every score, with the copied text removed.
+rag_benchmarking/ground_truth_final.xlsx
+rag_benchmarking/ground_truth_template_updated.xlsx
+rag_benchmarking/data/ground_truth.jsonl
+eval/ground_truth_paloma_20260926.xlsx
+eval/ground_truth_template_blank.xlsx

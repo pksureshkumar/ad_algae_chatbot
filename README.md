@@ -2,23 +2,33 @@
 
 ## Project Overview
 
-This is a research chatbot for **anaerobic digestion (AD), algae cultivation, and algae-AD integration**, built on top of [RAG-Anything](https://github.com/HKUDS/RAG-Anything). The knowledge base is 141 peer-reviewed PDFs stored in `papers/`. RAG-Anything is chosen specifically because it parses tables and figures — not just text — which are critical for extracting data from scientific papers.
+This is a research chatbot for **anaerobic digestion (AD), algae cultivation, and algae-AD integration**, built on top of [RAG-Anything](https://github.com/HKUDS/RAG-Anything). RAG-Anything is chosen specifically because it parses tables and figures — not just text — which are critical for extracting data from scientific papers.
+
+**The pipeline runs entirely on local Ollama — no cloud API keys, no per-token billing.** The LLM, the vision model, and the embedding model are all served from `localhost:11434`. The chatbot can be deployed to open access without incurring any cloud cost.
+
+### Corpus: the index holds more papers than `papers/` does
+
+`rag_storage/` was built on a different machine (`D:\pavan_chatbot\...`) from a `papers/` **plus** an `additional_papers/` folder, covering **272 papers**. Only 155 of those PDFs are present on this machine, and 1 PDF here (`1-s2.0-S1385894722038062-main.pdf`) was never indexed.
+
+**Consequence: never run `ingest.py --reset` on this machine.** It would rebuild from the 155 local PDFs and permanently discard 118 papers' worth of indexed knowledge. To rebuild the full corpus you would first need to recover the missing PDFs from the original `D:` drive. Use `reembed.py` instead for anything embedding-related.
 
 ## Directory Structure
 
 ```
 ad_algae_chatbot/
-├── papers/               # 141 PDFs (source knowledge base — do not modify)
-├── rag_storage/          # Azure pipeline index (built through ingest.py; do not edit manually)
+├── papers/               # 155 PDFs locally (the index covers 272 — see above)
+├── rag_storage/          # Vector index + knowledge graph (do not edit manually)
+├── reembed.py            # Swap the index to a new embedding model (hours, not weeks)
 ├── output/               # Query results (batch_results_final.md + per-paper MinerU folders)
 ├── config.py             # All settings: models, paths, RAGAnythingConfig, system prompt
-├── models.py             # Async LLM, embedding, and vision model functions (Azure)
+├── models.py             # Async LLM, embedding, and vision model functions (all Ollama)
 ├── ingest.py             # One-time pipeline: parse all PDFs → rag_storage/
 ├── chat.py               # Interactive multi-turn chatbot (reads rag_storage/)
 ├── query.py              # Single-shot CLI query (reads rag_storage/)
+├── app.py                # FastAPI web UI (reads rag_storage/)
 ├── batch_query.py        # Run all 60 permutations of research questions → output/
 ├── requirements.txt      # Python dependencies
-├── .env                  # Secret Azure credentials (never commit)
+├── .env                  # Local overrides (optional — defaults in config.py work as-is)
 └── .env.example          # Template for .env
 ```
 
@@ -28,33 +38,49 @@ ad_algae_chatbot/
 # 1. Install dependencies (Python 3.10+ required)
 pip install -r requirements.txt
 
-# 2. Copy env template and add your Azure credentials
-cp .env.example .env
-# Edit .env: set AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_VERSION
+# 2. Start Ollama and pull the three models
+ollama pull qwen3:14b       # LLM — entity extraction + answering
+ollama pull qwen2.5vl:32b   # vision — tables/figures during ingestion
+ollama pull bge-m3          # embeddings — 1024-dim, 8192-token context
 
-# 3. On first run MinerU will download its parsing models (~several GB from HuggingFace)
+# 3. (Optional) copy the env template to override model choices
+cp .env.example .env
+
+# 4. On first run MinerU will download its parsing models (~several GB from HuggingFace)
 #    Ensure internet access and enough disk space before running ingest.py
 ```
 
-## Running Python Scripts
-
-**Always use the full conda env path** — `conda` is not on the shell PATH in this environment:
-
-```bash
-/c/Users/SunYufei/anaconda3/envs/rag_anything/python.exe <script.py>
-```
+No API keys are required. If Ollama listens somewhere other than `localhost:11434`, set `OLLAMA_BASE_URL`.
 
 ## Workflow
 
-### Step 1 — Ingest (run once, already complete)
-
-**Azure** (`rag_storage/`): 141/141 papers indexed and ready.
+### Step 1 — Ingest (already done; see the corpus warning above)
 
 ```bash
-python ingest.py               # process all 141 PDFs
+python ingest.py               # index any PDFs in papers/ not already indexed
 python ingest.py --test        # first 2 PDFs only (verify pipeline before full run)
-python ingest.py --reset       # clear progress and start over
+python ingest.py --reset       # DESTRUCTIVE here — would drop the corpus to 155 papers
 ```
+
+`--reset` **renames** `rag_storage/` to `rag_storage_backup_<timestamp>/` rather than deleting it, then builds fresh.
+
+Ingestion requires MinerU, which needs **Python ≤3.13** — use the `ad_algae` conda env, not the system Python 3.14. MinerU's CLI must be on PATH or `MineruParser.check_installation()` returns False:
+
+```bash
+conda activate ad_algae && python ingest.py
+```
+
+### Step 1b — Changing the embedding model
+
+Changing `OLLAMA_EMBEDDING_MODEL` invalidates every stored vector — different model, different vector space, different dimension. **Use `reembed.py`, not `ingest.py --reset`:**
+
+```bash
+python reembed.py --dry-run    # report record counts and a time estimate
+python reembed.py              # re-embed all three stores (~4 h for 806k vectors)
+python reembed.py --store chunks
+```
+
+It regenerates vectors from the `content` already stored in the index, so the knowledge graph and all 272 papers survive. It rewrites `.npy`, `.pkl` **and** `.json` together (`query.py` and `batch_query.py` read the JSON directly, so a stale JSON would be a landmine), moves the originals to `rag_storage/_backup_azure_1536/`, and skips stores already marked `*.reembedded`.
 
 Ingestion progress is saved to `rag_storage/ingested_files.json` after each file — safe to interrupt and resume. Failed files are logged but do not stop the run.
 
@@ -91,19 +117,24 @@ Results are saved as clean Markdown (answers + paper references only, no raw chu
 
 | Setting | Default | Notes |
 |---|---|---|
-| `LLM_MODEL` | `gpt-4.1` | Azure deployment name |
-| `VISION_MODEL` | `gpt-4.1` | Used for table/image captioning during ingestion |
-| `EMBEDDING_MODEL` | `text-embedding-3-small` | `EMBEDDING_DIM` must match (1536) |
-| `DEFAULT_SEARCH_MODE` | `hybrid` | `hybrid` / `local` / `global` |
+| `OLLAMA_BASE_URL` | `http://localhost:11434/v1` | Ollama's OpenAI-compatible endpoint |
+| `OLLAMA_LLM_MODEL` | `qwen3:14b` | Entity extraction and answering |
+| `OLLAMA_VISION_MODEL` | `qwen2.5vl:32b` | Table/image captioning during ingestion |
+| `OLLAMA_EMBEDDING_MODEL` | `bge-m3` | Changing this requires `ingest.py --reset` |
+| `EMBEDDING_DIM` | `1024` | Must match the embedding model exactly |
+| `OLLAMA_THINKING` | `1` | qwen3 reasoning. Turning it *off* measured slower, not faster |
+| `DEFAULT_SEARCH_MODE` | `local` | `hybrid` / `local` / `global` |
 | `DEFAULT_TOP_K` | `10` | Chunks retrieved per query |
 | `RAG_CONFIG.max_concurrent_files` | `2` | Lower if running out of memory |
 | `DOMAIN_SYSTEM_PROMPT` | (AD/algae expert prompt) | Edit to change chatbot persona |
 
 ## Model Functions (`models.py`)
 
-- **`llm_model_func`** — Azure OpenAI chat completions. Uses `load_dotenv(override=True)` to ensure `.env` overrides any system env vars.
-- **`embedding_func`** — Azure embeddings, wrapped in LightRAG's `EmbeddingFunc` (dim=1536).
-- **`vision_model_func`** — Azure GPT-4 vision for ingestion. Handles local file paths, raw base64 strings, data URIs, and HTTP URLs.
+All three call the same local Ollama server through its OpenAI-compatible API.
+
+- **`llm_model_func`** — chat completions via `qwen3:14b`, temperature 0.1. Prepends `DOMAIN_SYSTEM_PROMPT` to every call.
+- **`embedding_func`** — `bge-m3` embeddings wrapped in LightRAG's `EmbeddingFunc` (dim=1024). Sends fixed-size sub-batches because Ollama stalls on large batches of long chunks, re-sorts responses by index since Ollama does not guarantee ordering, and hard-fails on a dimension mismatch rather than writing corrupt vectors.
+- **`vision_model_func`** — `qwen2.5vl:32b` for ingestion. Handles local file paths, raw base64 strings, data URIs, and HTTP URLs; falls back to text-only if an image cannot be loaded.
 
 ## Search Modes
 
@@ -124,16 +155,17 @@ answer = await rag.aquery(query=query, mode=mode, vlm_enhanced=False)
 ```
 Already applied in `chat.py`, `query.py`, and `batch_query.py`.
 
-### `load_dotenv(override=True)` in `models.py`
-The system environment had `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_ENDPOINT` swapped at the OS level. `override=True` ensures `.env` values always win over system env vars.
+### Embedding model and index are coupled
+`rag_storage/` stores raw vectors, not text-to-vector mappings. Swapping `OLLAMA_EMBEDDING_MODEL` without `ingest.py --reset` either crashes on the dimension assert in `nano_vectordb` or — if the dimensions happen to match — silently returns nonsense, because query vectors land in a different space than the indexed ones.
 
 ### `_ensure_lightrag_initialized()` before queries
 LightRAG is initialized lazily. Always call `await rag._ensure_lightrag_initialized()` before any query to avoid `NoneType` errors on `rag.lightrag`.
 
 ## Important Notes
 
-- **`rag_storage/` is generated data** — can be rebuilt by re-running `ingest.py` (~1 day). Do not manually edit files inside it.
+- **`rag_storage/` is generated data** — rebuildable by re-running `ingest.py`. Do not manually edit files inside it. Expect ~20 GB and a multi-day run on local hardware.
 - **`papers/` is read-only** — ingest.py never modifies PDFs.
 - **MinerU model download** — happens automatically on the first `ingest.py` run. Models cached in `~/.cache/huggingface/`. Requires several GB of disk space.
-- **Azure API costs** — ingestion calls the Azure vision API for every extracted figure and table. Monitor usage on large runs.
+- **No API costs** — the whole pipeline is local. The tradeoff is wall-clock time: a hosted API ingests in hours, local Ollama in days.
+- **Keep Ollama's models resident** — set `OLLAMA_KEEP_ALIVE=-1` before a long ingest so the LLM, vision, and embedding models are not repeatedly evicted and reloaded from disk.
 - **`.env` must never be committed** — listed in `.gitignore`.

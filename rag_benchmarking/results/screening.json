@@ -1,0 +1,98 @@
+[
+  {
+    "id": "Q01",
+    "stratum": "text-available",
+    "leak": "4/4",
+    "notes": "leaked to body text: ['198631', '230167', '12216', '13455']"
+  },
+  {
+    "id": "Q02",
+    "stratum": "table-exclusive",
+    "leak": "0/1",
+    "notes": "value also in other papers: {'98.9': 3}"
+  },
+  {
+    "id": "Q03",
+    "stratum": "text-available",
+    "leak": "3/5",
+    "notes": "leaked to body text: ['300', '6034', '2700']; value also in other papers: {'300': 182, '2700': 15, '0.03': 62, '0.18': 45}"
+  },
+  {
+    "id": "Q04",
+    "stratum": "text-available",
+    "leak": "0/2",
+    "notes": "value also in other papers: {'0.200': 5}"
+  },
+  {
+    "id": "Q05",
+    "stratum": "mixed",
+    "leak": "1/6",
+    "notes": "leaked to body text: ['1.16']; value also in other papers: {'1.16': 14, '1.24': 20}"
+  },
+  {
+    "id": "Q06",
+    "stratum": "table-exclusive",
+    "leak": "0/6",
+    "notes": "value also in other papers: {'7560': 4, '34.6': 5, '39.2': 4}"
+  },
+  {
+    "id": "Q07",
+    "stratum": "table-exclusive",
+    "leak": "0/1",
+    "notes": "clean"
+  },
+  {
+    "id": "Q08",
+    "stratum": "table-exclusive",
+    "leak": "0/3",
+    "notes": "value also in other papers: {'82.3': 8, '66.1': 6, '62.0': 5}"
+  },
+  {
+    "id": "Q09",
+    "stratum": "mixed",
+    "leak": "1/2",
+    "notes": "leaked to body text: ['46883']"
+  },
+  {
+    "id": "Q10",
+    "stratum": "mixed",
+    "leak": "4/6",
+    "notes": "leaked to body text: ['564768', '46883', '232455', '47607']"
+  },
+  {
+    "id": "Q11",
+    "stratum": "mixed",
+    "leak": "2/3",
+    "notes": "leaked to body text: ['1240', '1375']; value also in other papers: {'1240': 10, '1375': 7, '302': 79}"
+  },
+  {
+    "id": "Q12",
+    "stratum": "table-exclusive",
+    "leak": "0/2",
+    "notes": "value also in other papers: {'0.99': 28, '0.92': 18}"
+  },
+  {
+    "id": "Q13",
+    "stratum": "table-exclusive",
+    "leak": "0/2",
+    "notes": "value also in other papers: {'74.1': 5}"
+  },
+  {
+    "id": "Q14",
+    "stratum": "table-exclusive",
+    "leak": "0/4",
+    "notes": "value also in other papers: {'1.38': 10, '1.32': 16}"
+  },
+  {
+    "id": "Q15",
+    "stratum": "table-exclusive",
+    "leak": "0/3",
+    "notes": "value also in other papers: {'423': 46, '0.83': 16, '1.94': 9}"
+  },
+  {
+    "id": "Q16",
+    "stratum": "table-exclusive",
+    "leak": "0/3",
+    "notes": "value also in other papers: {'0.19': 20}"
+  }
+]

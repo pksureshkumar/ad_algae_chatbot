@@ -1,0 +1,14 @@
+loading index...
+  27043 vectors, 4655 table/image (17.2%)
+  P1 multimodal  gold_chunk=True  paper_rank=1 values=2/2 (9.8s)
+  P1 text_only   gold_chunk=False paper_rank=1 values=0/2 (10.4s)
+  P2 multimodal  gold_chunk=True  paper_rank=1 values=2/2 (7.8s)
+  P2 text_only   gold_chunk=False paper_rank=None values=0/2 (3.9s)
+  P3 multimodal  gold_chunk=True  paper_rank=1 values=4/4 (5.0s)
+  P3 text_only   gold_chunk=False paper_rank=5 values=0/4 (4.2s)
+  P4 multimodal  gold_chunk=True  paper_rank=1 values=3/3 (5.0s)
+  P4 text_only   gold_chunk=False paper_rank=1 values=0/3 (7.5s)
+  P5 multimodal  gold_chunk=True  paper_rank=1 values=3/3 (5.9s)
+  P5 text_only   gold_chunk=False paper_rank=1 values=2/3 (4.7s)
+
+wrote output/pilot_results.md and output/pilot_results.json

@@ -1,0 +1,8 @@
+{
+  "arm": "gpt_websearch",
+  "judge": "phi4:14b",
+  "n": 16,
+  "means": {
+    "answer_relevancy": 0.5176
+  }
+}

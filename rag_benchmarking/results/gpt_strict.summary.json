@@ -1,0 +1,12 @@
+{
+  "questions": 16,
+  "context_free_arm": true,
+  "mean_accuracy": 0.0,
+  "values_correct": 0,
+  "values_missed": 53,
+  "questions_abstained": 12,
+  "questions_asserted_without_gold": 0,
+  "gold_paper_retrieved": "n/a",
+  "gold_chunk_retrieved": "n/a",
+  "values_fabricated": "n/a (no context to check against)"
+}

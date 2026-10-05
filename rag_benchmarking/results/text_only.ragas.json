@@ -1,0 +1,13 @@
+{
+  "arm": "text_only",
+  "judge": "phi4:14b",
+  "n": 16,
+  "means": {
+    "non_llm_context_precision_with_reference": 0.0,
+    "non_llm_context_recall": 0.0,
+    "id_based_context_precision": 0.254,
+    "id_based_context_recall": 0.8125,
+    "faithfulness": 0.7882,
+    "answer_relevancy": 0.2122
+  }
+}

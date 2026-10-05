@@ -10,22 +10,24 @@ In-session commands:
     quit / exit                 Exit
 """
 
+import fast_storage  # must be first — patches NanoVectorDB before LightRAG loads  # noqa: F401
+
 import asyncio
 import logging
 import textwrap
-from collections import defaultdict
 
 from lightrag import QueryParam
 from raganything import RAGAnything
 
-from config import RAG_CONFIG, RAG_STORAGE_DIR, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE
+from citations import build_citation_context, extract_unique_filenames
+from config import (RAG_CONFIG, RAG_STORAGE_DIR, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE,
+                    LIGHTRAG_KWARGS)
 from models import llm_model_func, embedding_func, vision_model_func
 
-EXCERPT_LEN = 300  # characters shown per chunk excerpt
+EXCERPT_LEN = 300
 
 
 def check_index():
-    """Warn the user if the knowledge base has not been built yet."""
     if not RAG_STORAGE_DIR.exists() or not any(RAG_STORAGE_DIR.iterdir()):
         print(
             "\n[WARNING] rag_storage/ is empty or missing.\n"
@@ -33,52 +35,68 @@ def check_index():
         )
 
 
-def format_sources(sources: dict) -> str:
-    """Format retrieved chunks grouped by source file with short excerpts."""
-    chunks = sources.get("data", {}).get("chunks", [])
-    if not chunks:
+def format_references(refs: list[dict], chunks: list[dict]) -> str:
+    if not refs:
         return ""
 
-    # Group chunks by filename, preserving first-seen order.
-    by_file = defaultdict(list)
+    # Build excerpt map
+    excerpt_map: dict[str, list[str]] = {r["filename"]: [] for r in refs}
     for chunk in chunks:
-        fname = (chunk.get("file_path") or "").split("/")[-1]
-        if fname:
-            by_file[fname].append(chunk.get("content", "").strip())
-
-    lines = ["\nSources:"]
-    for i, (fname, contents) in enumerate(by_file.items(), 1):
-        lines.append(f"\n  [{i}] {fname}")
-        for content in contents:
+        raw = chunk.get("file_path") or ""
+        fname = raw.replace("\\", "/").split("/")[-1]
+        if fname in excerpt_map:
+            content = chunk.get("content", "").strip()
             excerpt = " ".join(content.split())[:EXCERPT_LEN]
             if len(content) > EXCERPT_LEN:
                 excerpt += "..."
-            for line in textwrap.wrap(excerpt, width=76, initial_indent="      ", subsequent_indent="      "):
+            excerpt_map[fname].append(excerpt)
+
+    lines = ["\nReferences:"]
+    for r in refs:
+        # Citation line
+        if r["doi"]:
+            cite = f"  [{r['ref_num']}] {r['title']} ({r['year']})\n        https://doi.org/{r['doi']}"
+        else:
+            parts = [r["title"]]
+            if r["authors"]:
+                parts.append(r["authors"])
+            if r["year"]:
+                parts.append(r["year"])
+            cite = f"  [{r['ref_num']}] " + " — ".join(parts)
+        if r["authors"] and r["doi"]:
+            cite += f"\n        {r['authors']}"
+        lines.append(cite)
+
+        # Excerpts
+        for content in excerpt_map.get(r["filename"], []):
+            for line in textwrap.wrap(content, width=76, initial_indent="        ", subsequent_indent="        "):
                 lines.append(line)
+
     return "\n".join(lines)
 
 
 async def main():
-    # Suppress noisy library logs during interactive use.
     logging.basicConfig(level=logging.WARNING)
-
     check_index()
 
     print("\n" + "=" * 62)
     print("  Anaerobic Digestion & Algae Research Chatbot")
-    print("  Knowledge base: ~141 peer-reviewed papers")
-    print("  Powered by RAG-Anything + GPT-4o")
+    print("  Knowledge base: ~272 peer-reviewed papers")
+    print("  Powered by RAG-Anything + qwen3:14b + qwen2.5vl:32b")
     print("=" * 62)
     print("Type your question and press Enter.")
     print("Commands: :mode hybrid|local|global  |  :topk <n>  |  quit\n")
 
     rag = RAGAnything(
         config=RAG_CONFIG,
+        lightrag_kwargs=LIGHTRAG_KWARGS,
         llm_model_func=llm_model_func,
         embedding_func=embedding_func,
         vision_model_func=vision_model_func,
     )
+    print("Loading knowledge base into memory (this may take a few minutes)...")
     await rag._ensure_lightrag_initialized()
+    print("✓ Ready — knowledge base loaded.\n")
 
     search_mode = DEFAULT_SEARCH_MODE
     top_k = DEFAULT_TOP_K
@@ -97,7 +115,6 @@ async def main():
             print("Goodbye!")
             break
 
-        # In-session command: change search mode
         if user_input.startswith(":mode "):
             mode = user_input.split(None, 1)[1].strip()
             if mode in ("hybrid", "local", "global"):
@@ -107,7 +124,6 @@ async def main():
                 print("[Invalid mode. Choose: hybrid, local, global]")
             continue
 
-        # In-session command: change top-k
         if user_input.startswith(":topk "):
             try:
                 top_k = int(user_input.split(None, 1)[1].strip())
@@ -119,10 +135,17 @@ async def main():
         print("\nAssistant: ", end="", flush=True)
         try:
             param = QueryParam(mode=search_mode, top_k=top_k)
-            answer = await rag.aquery(query=user_input, mode=search_mode, vlm_enhanced=False)
-            sources = await rag.lightrag.aquery_data(user_input, param=param)
+            sources_data = await rag.lightrag.aquery_data(user_input, param=param)
+
+            chunks = (sources_data or {}).get("data", {}).get("chunks", [])
+            filenames = extract_unique_filenames(chunks)
+            instruction, refs = build_citation_context(filenames)
+
+            augmented = f"{user_input}\n\n{instruction}" if instruction else user_input
+            answer = await rag.aquery(query=augmented, mode=search_mode, vlm_enhanced=False)
+
             print(answer)
-            print(format_sources(sources))
+            print(format_references(refs, chunks))
         except Exception as e:
             print(f"[Error: {e}]")
 

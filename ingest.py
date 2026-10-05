@@ -6,18 +6,23 @@ Run once (or resume after interruption):
 
 Options:
     --test      Process only the first 2 PDFs (sanity check before a full run)
-    --reset     Clear saved progress and re-ingest everything from scratch
+    --reset     Move the existing index aside and re-ingest everything from scratch
 """
 
 import asyncio
 import json
 import logging
 import argparse
+import time
 from pathlib import Path
 
 from raganything import RAGAnything
 
-from config import RAG_CONFIG, PAPERS_DIR, RAG_STORAGE_DIR
+from config import (
+    RAG_CONFIG, PAPERS_DIR, RAG_STORAGE_DIR,
+    OLLAMA_LLM_MODEL, OLLAMA_VISION_MODEL, OLLAMA_EMBEDDING_MODEL,
+    EMBEDDING_DIM, OLLAMA_THINKING, LIGHTRAG_KWARGS,
+)
 from models import llm_model_func, embedding_func, vision_model_func
 
 PROGRESS_FILE = RAG_STORAGE_DIR / "ingested_files.json"
@@ -47,15 +52,48 @@ def save_progress(ingested: set):
         json.dump(sorted(ingested), f, indent=2)
 
 
+def reset_storage() -> Path | None:
+    """Move the whole index aside so ingestion starts from a clean slate.
+
+    Renamed rather than deleted — the old index is the only copy of a run that
+    took days to produce, and a dimension change makes it unloadable but not
+    worthless. Delete the backup by hand once the new index is verified.
+    """
+    if not RAG_STORAGE_DIR.exists() or not any(RAG_STORAGE_DIR.iterdir()):
+        RAG_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+        return None
+
+    backup = RAG_STORAGE_DIR.with_name(
+        f"{RAG_STORAGE_DIR.name}_backup_{time.strftime('%Y%m%d_%H%M%S')}"
+    )
+    RAG_STORAGE_DIR.rename(backup)
+    RAG_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+    return backup
+
+
 async def main(test: bool = False, reset: bool = False):
+    backup = None
+    if reset:
+        # Must happen before setup_logging(), which opens a handler inside the
+        # directory we are about to rename.
+        backup = reset_storage()
+
     setup_logging()
     logger = logging.getLogger(__name__)
 
     RAG_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
     if reset:
-        PROGRESS_FILE.unlink(missing_ok=True)
-        logger.info("Progress file cleared — starting from scratch.")
+        if backup:
+            logger.info(f"Previous index moved to {backup.name} — starting from scratch.")
+        else:
+            logger.info("No existing index found — starting from scratch.")
+
+    logger.info(
+        f"Backend: 100%% local Ollama | llm={OLLAMA_LLM_MODEL} "
+        f"vision={OLLAMA_VISION_MODEL} embed={OLLAMA_EMBEDDING_MODEL} (dim={EMBEDDING_DIM}) "
+        f"| thinking={'on' if OLLAMA_THINKING else 'off'}"
+    )
 
     pdfs = sorted(PAPERS_DIR.glob("*.pdf"))
     if not pdfs:
@@ -79,6 +117,7 @@ async def main(test: bool = False, reset: bool = False):
 
     rag = RAGAnything(
         config=RAG_CONFIG,
+        lightrag_kwargs=LIGHTRAG_KWARGS,
         llm_model_func=llm_model_func,
         embedding_func=embedding_func,
         vision_model_func=vision_model_func,

@@ -17,7 +17,7 @@ from collections import defaultdict
 from lightrag import QueryParam
 from raganything import RAGAnything
 
-from config import RAG_CONFIG, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE
+from config import RAG_CONFIG, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE, LIGHTRAG_KWARGS
 from models import llm_model_func, embedding_func, vision_model_func
 
 EXCERPT_LEN = 300  # characters shown per chunk excerpt
@@ -53,6 +53,7 @@ async def main(query: str, search_mode: str, top_k: int):
 
     rag = RAGAnything(
         config=RAG_CONFIG,
+        lightrag_kwargs=LIGHTRAG_KWARGS,
         llm_model_func=llm_model_func,
         embedding_func=embedding_func,
         vision_model_func=vision_model_func,

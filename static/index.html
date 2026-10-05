@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AD &amp; Algae Research Chatbot</title>
+
+  <!-- marked.js — markdown renderer -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+  <!-- highlight.js — code syntax highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/highlight.min.js"></script>
+
+  <style>
+    /* ── Design tokens ──────────────────────────────────────────── */
+    :root {
+      --bg:           #0d1117;
+      --surface:      #161b22;
+      --surface-2:    #21262d;
+      --border:       #30363d;
+      --text:         #e6edf3;
+      --text-muted:   #8b949e;
+      --accent:       #3fb950;
+      --accent-dim:   #122119;
+      --accent-hover: #56e569;
+      --user-color:   #388bfd;
+      --user-dim:     #0d2044;
+      --danger:       #f85149;
+      --radius:       12px;
+      --radius-sm:    6px;
+      --sidebar-w:    272px;
+    }
+
+    /* ── Reset ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 18px;
+      gap: 24px;
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-dim);
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .hr { height: 1px; background: var(--border); flex-shrink: 0; }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .setting-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-muted);
+    }
+
+    /* Mode cards */
+    .mode-options { display: flex; flex-direction: column; gap: 5px; }
+
+    .mode-option {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background 120ms, border-color 120ms;
+      user-select: none;
+    }
+
+    .mode-option:hover { background: var(--surface-2); }
+
+    .mode-option.active {
+      background: var(--accent-dim);
+      border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    }
+
+    .mode-option input[type="radio"] { display: none; }
+
+    .mode-radio {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      transition: border-color 120ms;
+    }
+
+    .mode-option.active .mode-radio {
+      border-color: var(--accent);
+    }
+
+    .mode-radio::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 120ms;
+    }
+
+    .mode-option.active .mode-radio::after { opacity: 1; }
+
+    .mode-info { flex: 1; min-width: 0; }
+
+    .mode-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .mode-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Top-K slider */
+    .topk-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topk-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: var(--surface-2);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      transition: transform 100ms;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+    /* Stats */
+    .stats { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+    }
+
+    .stat-icon { font-size: 13px; flex-shrink: 0; }
+    .stat-label { color: var(--text-muted); flex: 1; }
+    .stat-val { font-weight: 600; }
+
+    /* ── Main area ──────────────────────────────────────────────── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* Chat scroll container */
+    .chat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 36px clamp(20px, 6vw, 72px);
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-scroll::-webkit-scrollbar { width: 5px; }
+    .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Empty / welcome state */
+    .welcome {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      text-align: center;
+      padding-bottom: 48px;
+      animation: fade-in 400ms ease;
+    }
+
+    .welcome-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--accent-dim);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+    }
+
+    .welcome h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .welcome p {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 420px;
+      line-height: 1.65;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 540px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      padding: 6px 13px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: border-color 120ms, background 120ms, color 120ms;
+      line-height: 1.4;
+    }
+
+    .chip:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      color: var(--accent-hover);
+    }
+
+    /* ── Messages ───────────────────────────────────────────────── */
+    .msg-row {
+      display: flex;
+      gap: 12px;
+      max-width: 820px;
+      width: 100%;
+      animation: slide-up 200ms ease;
+    }
+
+    .msg-row.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    .avatar.user-av {
+      background: var(--user-dim);
+      border: 1px solid color-mix(in srgb, var(--user-color) 50%, transparent);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--user-color);
+    }
+
+    .avatar.asst-av {
+      background: var(--accent-dim);
+      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    }
+
+    .msg-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+    .bubble {
+      padding: 13px 16px;
+      border-radius: var(--radius);
+      line-height: 1.7;
+      font-size: 14.5px;
+      word-break: break-word;
+    }
+
+    .msg-row.user .bubble {
+      background: var(--user-dim);
+      border: 1px solid color-mix(in srgb, var(--user-color) 25%, transparent);
+      border-bottom-right-radius: 3px;
+      white-space: pre-wrap;
+    }
+
+    .msg-row.asst .bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 3px;
+    }
+
+    /* Markdown inside bubble */
+    .bubble h1, .bubble h2, .bubble h3 {
+      margin: 14px 0 6px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .bubble h1 { font-size: 18px; }
+    .bubble h2 { font-size: 16px; }
+    .bubble h3 { font-size: 14.5px; }
+    .bubble p { margin-bottom: 10px; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul, .bubble ol { padding-left: 22px; margin-bottom: 10px; }
+    .bubble li { margin-bottom: 3px; }
+    .bubble strong { color: #f0f6fc; }
+    .bubble em { color: var(--text-muted); }
+    .bubble blockquote {
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      margin: 10px 0;
+    }
+    .bubble code {
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+      font-size: 12.5px;
+      background: var(--surface-2);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+    .bubble pre {
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    .bubble pre code { background: none; padding: 0; font-size: 12.5px; }
+    .bubble table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+      font-size: 13px;
+    }
+    .bubble th, .bubble td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      text-align: left;
+    }
+    .bubble th { background: var(--surface-2); font-weight: 600; }
+
+    /* References */
+    .refs-btn {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+      transition: border-color 120ms, color 120ms, background 120ms;
+    }
+
+    .refs-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    .refs-btn .chevron {
+      font-size: 10px;
+      transition: transform 200ms;
+    }
+
+    .refs-btn.open .chevron { transform: rotate(180deg); }
+
+    .refs-panel {
+      display: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .refs-panel.open { display: block; }
+
+    .ref-row {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ref-row:last-child { border-bottom: none; }
+
+    .ref-num {
+      display: inline-block;
+      min-width: 22px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .ref-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 3px;
+    }
+
+    .ref-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .ref-authors {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .ref-year {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--surface-2);
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .ref-doi {
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+      font-family: 'SF Mono', 'Cascadia Code', monospace;
+    }
+
+    .ref-doi:hover { text-decoration: underline; }
+
+    .ref-no-doi {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .ref-excerpt {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    /* Typing indicator */
+    .typing-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      animation: fade-in 200ms ease;
+    }
+
+    .typing-dots {
+      display: flex;
+      gap: 5px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      border-bottom-left-radius: 3px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0%, 60%, 100% { transform: translateY(0);   opacity: 0.35; }
+      30%           { transform: translateY(-7px); opacity: 1; }
+    }
+
+    /* Error bubble */
+    .bubble.error {
+      border-color: var(--danger) !important;
+      color: var(--danger);
+    }
+
+    /* ── Input bar ──────────────────────────────────────────────── */
+    .input-bar {
+      padding: 16px clamp(20px, 6vw, 72px) 22px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .input-box {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 11px 13px;
+      transition: border-color 200ms;
+    }
+
+    .input-box:focus-within {
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+
+    #query {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 14.5px;
+      font-family: inherit;
+      resize: none;
+      line-height: 1.55;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    #query::placeholder { color: var(--text-muted); }
+
+    #send {
+      width: 34px;
+      height: 34px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      transition: background 120ms, transform 100ms;
+    }
+
+    #send:hover:not(:disabled) { background: var(--accent-hover); }
+    #send:active:not(:disabled) { transform: scale(0.94); }
+    #send:disabled { background: var(--surface-2); cursor: not-allowed; }
+    #send:disabled .send-icon { opacity: 0.35; }
+
+    .send-icon { color: #000; display: block; }
+
+    .input-hint {
+      margin-top: 7px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">🌿</div>
+    <div class="brand-text">
+      <h1>AD &amp; Algae</h1>
+      <p>Research Assistant</p>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <!-- Search mode -->
+  <div class="setting-group">
+    <div class="setting-label">Search Mode</div>
+    <div class="mode-options" id="mode-opts">
+      <label class="mode-option active" data-mode="hybrid">
+        <input type="radio" name="mode" value="hybrid" checked />
+        <div class="mode-radio"></div>
+        <div class="mode-info">
+          <div class="mode-name">Hybrid</div>
+          <div class="mode-desc">Local + global context</div>
+        </div>
+      </label>
+      <label class="mode-option" data-mode="local">
+        <input type="radio" name="mode" value="local" />
+        <div class="mode-radio"></div>
+        <div class="mode-info">
+          <div class="mode-name">Local</div>
+          <div class="mode-desc">Entity-focused retrieval</div>
+        </div>
+      </label>
+      <label class="mode-option" data-mode="global">
+        <input type="radio" name="mode" value="global" />
+        <div class="mode-radio"></div>
+        <div class="mode-info">
+          <div class="mode-name">Global</div>
+          <div class="mode-desc">Cross-document themes</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Top-K -->
+  <div class="setting-group">
+    <div class="topk-row">
+      <div class="setting-label">Retrieved Chunks</div>
+      <span class="topk-value" id="topk-val">10</span>
+    </div>
+    <input type="range" id="topk" min="3" max="25" value="10" step="1" />
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-pill">
+      <span class="stat-icon">📄</span>
+      <span class="stat-label">Knowledge base</span>
+      <span class="stat-val">272 papers</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-icon">⚗️</span>
+      <span class="stat-label">Domain</span>
+      <span class="stat-val">AD / Algae</span>
+    </div>
+    <div class="stat-pill">
+      <span class="stat-icon">🤖</span>
+      <span class="stat-label">Model</span>
+      <span class="stat-val">qwen3:14b</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+  <div class="chat-scroll" id="chat">
+    <!-- Welcome screen -->
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🧪</div>
+      <h2>Ask the Research Assistant</h2>
+      <p>Query across 141 peer-reviewed papers on anaerobic digestion,
+         algae cultivation, and AD–algae integration systems.</p>
+      <div class="chips" id="chips">
+        <span class="chip">Methane yield with algal co-digestion?</span>
+        <span class="chip">VFA production from microalgae?</span>
+        <span class="chip">Technoeconomics of algae-AD biorefineries?</span>
+        <span class="chip">CO₂ capture via photobioreactors?</span>
+        <span class="chip">HRAP digestate nutrient recycling?</span>
+        <span class="chip">Bio-electrochemical systems for AD enhancement?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-bar">
+    <div class="input-box">
+      <textarea id="query" rows="1" placeholder="Ask a research question…"></textarea>
+      <button id="send" title="Send (Enter)">
+        <svg class="send-icon" width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M2 8L14 2L8 14L7 9L2 8Z"
+                stroke="currentColor" stroke-width="1.6"
+                stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <p class="input-hint">Enter&nbsp;to send &nbsp;·&nbsp; Shift+Enter for new line &nbsp;·&nbsp; Results grounded in retrieved literature</p>
+  </div>
+</main>
+
+<script>
+/* ─── State ─────────────────────────────────── */
+const state = { mode: 'hybrid', topK: 10, busy: false };
+
+/* ─── DOM ───────────────────────────────────── */
+const chatEl   = document.getElementById('chat');
+const queryEl  = document.getElementById('query');
+const sendEl   = document.getElementById('send');
+const topkEl   = document.getElementById('topk');
+const topkVal  = document.getElementById('topk-val');
+
+/* ─── marked config ─────────────────────────── */
+marked.setOptions({ breaks: true, gfm: true });
+
+/* ─── Settings ──────────────────────────────── */
+topkEl.addEventListener('input', () => {
+  state.topK = +topkEl.value;
+  topkVal.textContent = state.topK;
+});
+
+document.querySelectorAll('.mode-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.mode-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    state.mode = opt.dataset.mode;
+    opt.querySelector('input').checked = true;
+  });
+});
+
+/* ─── Suggestion chips ──────────────────────── */
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    queryEl.value = chip.textContent;
+    autoGrow();
+    submit();
+  });
+});
+
+/* ─── Textarea auto-grow ────────────────────── */
+function autoGrow() {
+  queryEl.style.height = 'auto';
+  queryEl.style.height = Math.min(queryEl.scrollHeight, 160) + 'px';
+}
+queryEl.addEventListener('input', autoGrow);
+
+/* ─── Send on Enter ─────────────────────────── */
+queryEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); }
+});
+sendEl.addEventListener('click', submit);
+
+/* ─── Scroll to bottom ──────────────────────── */
+function scrollBottom() {
+  chatEl.scrollTop = chatEl.scrollHeight;
+}
+
+/* ─── Remove welcome screen once ───────────── */
+let welcomeRemoved = false;
+function removeWelcome() {
+  if (!welcomeRemoved) {
+    document.getElementById('welcome')?.remove();
+    welcomeRemoved = true;
+  }
+}
+
+/* ─── Render helpers ────────────────────────── */
+function esc(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function userBubble(text) {
+  removeWelcome();
+  const div = document.createElement('div');
+  div.className = 'msg-row user';
+  div.innerHTML = `
+    <div class="avatar user-av">You</div>
+    <div class="msg-body">
+      <div class="bubble">${esc(text)}</div>
+    </div>`;
+  chatEl.appendChild(div);
+  scrollBottom();
+}
+
+function typingIndicator() {
+  removeWelcome();
+  const div = document.createElement('div');
+  div.className = 'typing-row';
+  div.id = 'typing';
+  div.innerHTML = `
+    <div class="avatar asst-av">🌿</div>
+    <div class="typing-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>`;
+  chatEl.appendChild(div);
+  scrollBottom();
+  return div;
+}
+
+function asstBubble(answer, references) {
+  const div = document.createElement('div');
+  div.className = 'msg-row asst';
+
+  const rendered = marked.parse(answer);
+
+  let refsHtml = '';
+  if (references && references.length > 0) {
+    const rows = references.map(r => {
+      const doiHtml = r.doi
+        ? `<a class="ref-doi" href="https://doi.org/${esc(r.doi)}" target="_blank" rel="noopener">DOI: ${esc(r.doi)}</a>`
+        : `<span class="ref-no-doi">no DOI</span>`;
+      const authorsHtml = r.authors
+        ? `<span class="ref-authors">${esc(r.authors)}</span>` : '';
+      const yearHtml = r.year
+        ? `<span class="ref-year">${esc(r.year)}</span>` : '';
+      const excerptsHtml = r.excerpts.length > 0
+        ? `<div class="ref-excerpt">${esc(r.excerpts[0])}</div>` : '';
+
+      return `
+        <div class="ref-row">
+          <div class="ref-title"><span class="ref-num">[${r.ref_num}]</span> ${esc(r.title)}</div>
+          <div class="ref-meta">${authorsHtml}${yearHtml}${doiHtml}</div>
+          ${excerptsHtml}
+        </div>`;
+    }).join('');
+
+    refsHtml = `
+      <button class="refs-btn" onclick="toggleRefs(this)">
+        📚 <span>${references.length} reference${references.length > 1 ? 's' : ''}</span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="refs-panel">${rows}</div>`;
+  }
+
+  div.innerHTML = `
+    <div class="avatar asst-av">🌿</div>
+    <div class="msg-body">
+      <div class="bubble">${rendered}</div>
+      ${refsHtml}
+    </div>`;
+
+  chatEl.appendChild(div);
+
+  // Syntax-highlight code blocks
+  div.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+
+  scrollBottom();
+}
+
+function errBubble(msg) {
+  const div = document.createElement('div');
+  div.className = 'msg-row asst';
+  div.innerHTML = `
+    <div class="avatar asst-av">🌿</div>
+    <div class="msg-body">
+      <div class="bubble error">⚠ ${esc(msg)}</div>
+    </div>`;
+  chatEl.appendChild(div);
+  scrollBottom();
+}
+
+/* ─── References toggle ─────────────────────── */
+function toggleRefs(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+/* ─── Submit ────────────────────────────────── */
+async function submit() {
+  if (state.busy) return;
+  const q = queryEl.value.trim();
+  if (!q) return;
+
+  queryEl.value = '';
+  queryEl.style.height = 'auto';
+  state.busy = true;
+  sendEl.disabled = true;
+
+  userBubble(q);
+  const typing = typingIndicator();
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: q, mode: state.mode, top_k: state.topK }),
+    });
+    typing.remove();
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      errBubble(err.detail || `Server error ${res.status}`);
+    } else {
+      const data = await res.json();
+      asstBubble(data.answer, data.references);
+    }
+  } catch (e) {
+    typing.remove();
+    errBubble(`Network error: ${e.message}`);
+  } finally {
+    state.busy = false;
+    sendEl.disabled = false;
+    queryEl.focus();
+  }
+}
+</script>
+</body>
+</html>

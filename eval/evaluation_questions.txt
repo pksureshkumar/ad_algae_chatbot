@@ -1,0 +1,276 @@
+================================================================================
+EVALUATION QUESTIONS — AD/Algae Chatbot Benchmark
+================================================================================
+Total: 90 questions across 3 tiers
+Tier 1:  20 questions — Factual retrieval (specific numbers from specific papers)
+Tier 2:  60 questions — Cross-study synthesis (existing batch queries)
+Tier 3:  10 questions — Cross-paper reasoning (requires comparing across studies)
+================================================================================
+
+--------------------------------------------------------------------------------
+TIER 1 — FACTUAL RETRIEVAL (20 questions)
+--------------------------------------------------------------------------------
+Purpose: Tests whether the system can retrieve a specific numerical value from
+a specific paper. GPT-direct will hallucinate or give vague ranges. Text-only
+RAG may miss values buried in tables. Multimodal RAG should retrieve exact
+figures including those extracted from tables by MinerU.
+
+Scoring focus: numerical specificity, citation accuracy, faithfulness.
+
+T1-01. What methane yield (in mL CH4/g VS) was reported for Chlorella vulgaris
+       under mesophilic anaerobic digestion conditions, and what pretreatment
+       method was used?
+
+T1-02. What digestate dilution ratio was used to cultivate microalgae on
+       anaerobic digestion effluent in studies using high rate algal ponds
+       (HRAP), and what was the resulting biomass productivity?
+
+T1-03. What methane content (% v/v) was achieved during biogas upgrading using
+       an algal-bacterial photobioreactor at pilot scale, and over what time
+       period was this maintained?
+
+T1-04. What volatile fatty acid (VFA) concentration (g/L) was reported for
+       anaerobic co-digestion of microalgae with food waste, and what was the
+       acetate fraction of total VFAs?
+
+T1-05. What was the reported cost ($/kg or €/kg) for microalgae biomass
+       production in a techno-economic analysis of an integrated photobioreactor
+       and anaerobic digestion system?
+
+T1-06. What free ammonia (NH3) concentration was identified as inhibitory to
+       Chlorella vulgaris growth, and at what pH was this measured?
+
+T1-07. What improvement in methane yield (%) was reported when algal biochar
+       was added to anaerobic co-digestion of algal biomass and food waste
+       under mesophilic conditions?
+
+T1-08. What organic loading rate (g VS/L/d) and hydraulic retention time (days)
+       were used in long-term anaerobic digestion of microalgae grown in a high
+       rate algal pond (HRAP)?
+
+T1-09. What biogas methane content was achieved by simultaneous biogas upgrading
+       and centrate treatment in an outdoor pilot-scale HRAP, and what CO2
+       removal efficiency was reported?
+
+T1-10. What net energy ratio or energy return on investment was reported for an
+       integrated microalgae-anaerobic digestion system, and what system
+       boundary was used in the calculation?
+
+T1-11. What was the reported hydrogen yield (mL H2/g VS or similar) from a
+       bio-electrochemical system (BES) or microbial electrolysis cell (MEC)
+       combined with anaerobic digestion?
+
+T1-12. What lipid content (% dry weight) was reported for Chlorella vulgaris
+       grown using CO2 from biogas as the carbon source compared to air-fed
+       controls?
+
+T1-13. What specific methane yield was reported for anaerobic digestion of
+       Tetraselmis sp. or another marine microalgae, and how did it compare
+       to the theoretical biochemical methane potential?
+
+T1-14. What removal efficiency (%) for nitrogen and phosphorus was achieved
+       when microalgae were cultivated on anaerobic digestion effluent in a
+       photobioreactor or HRAP system?
+
+T1-15. What acetate production rate or titer was reported in a study using
+       microbial electrosynthesis or bio-electrochemical systems for CO2
+       reduction combined with anaerobic processes?
+
+T1-16. What was the reported seasonal variation in methane content of upgraded
+       biogas in an outdoor algal-bacterial photobioreactor system, and what
+       was the range across seasons?
+
+T1-17. What inoculum-to-substrate ratio (I:S, g VS/g VS) was used in
+       biochemical methane potential (BMP) tests for microalgae feedstocks,
+       and which BMP protocol was followed?
+
+T1-18. What polyhydroxyalkanoate (PHA) or polyhydroxybutyrate (PHB) yield
+       (% cell dry weight) was reported for microalgae or cyanobacteria under
+       nutrient stress conditions?
+
+T1-19. What was the reported energy consumption (kWh/m3 biogas or similar) for
+       membrane-based CO2 capture or upgrading of biogas to biomethane?
+
+T1-20. What organic loading rate and methane yield were reported for an upflow
+       anaerobic sludge blanket (UASB) reactor treating microalgae-based
+       wastewater or microalgal biomass?
+
+--------------------------------------------------------------------------------
+TIER 2 — CROSS-STUDY SYNTHESIS (60 questions)
+--------------------------------------------------------------------------------
+Purpose: Tests synthesis across multiple papers. All three systems attempt
+these. Existing results for the multimodal system are in batch_results_final.md.
+
+Format: [Template] x [Process variant]
+Templates:
+  A = "Give me methane yield improvement with {process} combined with AD"
+  B = "Give me VFA yield improvement with {process} combined with AD"
+  C = "Give me acetate yield improvement with {process} combined with AD"
+  D = "Give me bioproduct yield improvement with {process} combined with AD"
+  E = "Give me technoeconomic improvement in AD when combined with {process}"
+  F = "Give me economic improvement in AD when combined with {process}"
+
+Process variants:
+  1 = algal process
+  2 = algal biochar
+  3 = photosynthetic biocathode
+  4 = bio-electrochemical systems
+  5 = algal biogas upgrade
+  6 = algal CO2 capture
+  7 = photobioreactor
+  8 = HRAP
+  9 = high rate algal pond
+  10 = biochar electrode
+
+T2-A1.  Give me methane yield improvement with algal process combined with anaerobic digestion
+T2-A2.  Give me methane yield improvement with algal biochar combined with anaerobic digestion
+T2-A3.  Give me methane yield improvement with photosynthetic biocathode combined with anaerobic digestion
+T2-A4.  Give me methane yield improvement with bio-electrochemical systems combined with anaerobic digestion
+T2-A5.  Give me methane yield improvement with algal biogas upgrade combined with anaerobic digestion
+T2-A6.  Give me methane yield improvement with algal CO2 capture combined with anaerobic digestion
+T2-A7.  Give me methane yield improvement with photobioreactor combined with anaerobic digestion
+T2-A8.  Give me methane yield improvement with HRAP combined with anaerobic digestion
+T2-A9.  Give me methane yield improvement with high rate algal pond combined with anaerobic digestion
+T2-A10. Give me methane yield improvement with biochar electrode combined with anaerobic digestion
+
+T2-B1.  Give me VFA yield improvement with algal process combined with anaerobic digestion
+T2-B2.  Give me VFA yield improvement with algal biochar combined with anaerobic digestion
+T2-B3.  Give me VFA yield improvement with photosynthetic biocathode combined with anaerobic digestion
+T2-B4.  Give me VFA yield improvement with bio-electrochemical systems combined with anaerobic digestion
+T2-B5.  Give me VFA yield improvement with algal biogas upgrade combined with anaerobic digestion
+T2-B6.  Give me VFA yield improvement with algal CO2 capture combined with anaerobic digestion
+T2-B7.  Give me VFA yield improvement with photobioreactor combined with anaerobic digestion
+T2-B8.  Give me VFA yield improvement with HRAP combined with anaerobic digestion
+T2-B9.  Give me VFA yield improvement with high rate algal pond combined with anaerobic digestion
+T2-B10. Give me VFA yield improvement with biochar electrode combined with anaerobic digestion
+
+T2-C1.  Give me acetate yield improvement with algal process combined with anaerobic digestion
+T2-C2.  Give me acetate yield improvement with algal biochar combined with anaerobic digestion
+T2-C3.  Give me acetate yield improvement with photosynthetic biocathode combined with anaerobic digestion
+T2-C4.  Give me acetate yield improvement with bio-electrochemical systems combined with anaerobic digestion
+T2-C5.  Give me acetate yield improvement with algal biogas upgrade combined with anaerobic digestion
+T2-C6.  Give me acetate yield improvement with algal CO2 capture combined with anaerobic digestion
+T2-C7.  Give me acetate yield improvement with photobioreactor combined with anaerobic digestion
+T2-C8.  Give me acetate yield improvement with HRAP combined with anaerobic digestion
+T2-C9.  Give me acetate yield improvement with high rate algal pond combined with anaerobic digestion
+T2-C10. Give me acetate yield improvement with biochar electrode combined with anaerobic digestion
+
+T2-D1.  Give me bioproduct yield improvement with algal process combined with anaerobic digestion
+T2-D2.  Give me bioproduct yield improvement with algal biochar combined with anaerobic digestion
+T2-D3.  Give me bioproduct yield improvement with photosynthetic biocathode combined with anaerobic digestion
+T2-D4.  Give me bioproduct yield improvement with bio-electrochemical systems combined with anaerobic digestion
+T2-D5.  Give me bioproduct yield improvement with algal biogas upgrade combined with anaerobic digestion
+T2-D6.  Give me bioproduct yield improvement with algal CO2 capture combined with anaerobic digestion
+T2-D7.  Give me bioproduct yield improvement with photobioreactor combined with anaerobic digestion
+T2-D8.  Give me bioproduct yield improvement with HRAP combined with anaerobic digestion
+T2-D9.  Give me bioproduct yield improvement with high rate algal pond combined with anaerobic digestion
+T2-D10. Give me bioproduct yield improvement with biochar electrode combined with anaerobic digestion
+
+T2-E1.  Give me technoeconomic improvement in anaerobic digestion when combined with algal process
+T2-E2.  Give me technoeconomic improvement in anaerobic digestion when combined with algal biochar
+T2-E3.  Give me technoeconomic improvement in anaerobic digestion when combined with photosynthetic biocathode
+T2-E4.  Give me technoeconomic improvement in anaerobic digestion when combined with bio-electrochemical systems
+T2-E5.  Give me technoeconomic improvement in anaerobic digestion when combined with algal biogas upgrade
+T2-E6.  Give me technoeconomic improvement in anaerobic digestion when combined with algal CO2 capture
+T2-E7.  Give me technoeconomic improvement in anaerobic digestion when combined with photobioreactor
+T2-E8.  Give me technoeconomic improvement in anaerobic digestion when combined with HRAP
+T2-E9.  Give me technoeconomic improvement in anaerobic digestion when combined with high rate algal pond
+T2-E10. Give me technoeconomic improvement in anaerobic digestion when combined with biochar electrode
+
+T2-F1.  Give me economic improvement in anaerobic digestion when combined with algal process
+T2-F2.  Give me economic improvement in anaerobic digestion when combined with algal biochar
+T2-F3.  Give me economic improvement in anaerobic digestion when combined with photosynthetic biocathode
+T2-F4.  Give me economic improvement in anaerobic digestion when combined with bio-electrochemical systems
+T2-F5.  Give me economic improvement in anaerobic digestion when combined with algal biogas upgrade
+T2-F6.  Give me economic improvement in anaerobic digestion when combined with algal CO2 capture
+T2-F7.  Give me economic improvement in anaerobic digestion when combined with photobioreactor
+T2-F8.  Give me economic improvement in anaerobic digestion when combined with HRAP
+T2-F9.  Give me economic improvement in anaerobic digestion when combined with high rate algal pond
+T2-F10. Give me economic improvement in anaerobic digestion when combined with biochar electrode
+
+--------------------------------------------------------------------------------
+TIER 3 — CROSS-PAPER REASONING (10 questions)
+--------------------------------------------------------------------------------
+Purpose: Requires synthesizing and comparing data across multiple papers.
+Correct answers almost always depend on data in tables or figures, not just
+abstract text. This is where the largest gap between multimodal and text-only
+is expected. Answers should cite multiple papers and compare specific values.
+
+Scoring focus: all four metrics, but especially faithfulness and hallucination.
+
+T3-01. Across studies that applied pretreatment before anaerobic digestion of
+       microalgae, which pretreatment method (thermal, ultrasound, enzymatic,
+       chemical, or mechanical) shows the best net energy balance when
+       pretreatment energy cost is accounted for, and what methane yield
+       improvements were reported?
+
+T3-02. Comparing studies on algae-AD integration, what digestate dilution
+       factor is most commonly used before cultivating microalgae on AD
+       effluent, and how does this relate to free ammonia inhibition thresholds
+       reported for different species?
+
+T3-03. Across techno-economic assessments of integrated microalgae-anaerobic
+       digestion systems, what is the range of reported production costs or
+       levelized costs of energy, and what assumptions most commonly explain
+       the variation between studies?
+
+T3-04. Comparing HRAP-based biogas upgrading studies, what methane content
+       (% v/v) is consistently achievable in upgraded biogas, and how does
+       performance vary between indoor lab-scale and outdoor pilot-scale
+       systems?
+
+T3-05. Across studies using bio-electrochemical systems (BES) or microbial
+       electrolysis cells (MEC) combined with anaerobic digestion, what
+       applied voltage or energy input was used and what improvement in
+       methane or hydrogen yield was reported relative to conventional AD?
+
+T3-06. Looking at studies that co-digest microalgae with other substrates
+       (food waste, manure, sewage sludge), which co-substrate combination
+       consistently produces the highest methane yield improvement, and what
+       inoculum-to-substrate ratio was used?
+
+T3-07. Across lifecycle assessment (LCA) studies on microalgae-AD integrated
+       systems, what global warming potential (GWP, kg CO2-eq per unit energy
+       or product) is reported, and which system configurations achieve net
+       negative GWP?
+
+T3-08. Comparing studies on algal biochar addition to anaerobic digestion,
+       what biochar dosage (g/L or % VS) produced the greatest methane yield
+       improvement, and was this consistent across mesophilic and thermophilic
+       conditions?
+
+T3-09. Across studies that report VFA composition (not just total VFA) from
+       anaerobic fermentation or co-digestion involving algae, what is the
+       typical acetate-to-propionate ratio and how does algae addition affect
+       the VFA profile compared to controls without algae?
+
+T3-10. Looking at studies that simultaneously treat wastewater and produce
+       biogas or biomethane using integrated microalgae-AD systems, what
+       nutrient removal efficiencies (N and P) are reported alongside energy
+       outputs, and which system configuration achieves the best balance of
+       both?
+
+================================================================================
+SCORING RUBRIC (apply to every answer from all 3 systems)
+================================================================================
+
+(a) Citation accuracy       0 = no citations or hallucinated DOIs/titles
+                            1 = real papers cited but finding misattributed
+                            2 = correct paper with correct specific finding
+
+(b) Numerical specificity   0 = no numbers given
+                            1 = approximate range only (e.g., "200-400 mL/g VS")
+                            2 = specific value with units and conditions reported
+
+(c) Faithfulness            Verify 3 specific claims per answer against source
+                            0 = <50% of claims verifiable in cited papers
+                            1 = 50-80% verifiable
+                            2 = >80% verifiable
+
+(d) Hallucination flag      1 = at least one specific claim cannot be traced
+                                to any real paper (binary, any answer)
+                            0 = no hallucinations detected
+
+Scorer: blind to which system produced each answer.
+Max score per answer: 6 (for a-c). Track (d) separately as a rate.
+================================================================================
