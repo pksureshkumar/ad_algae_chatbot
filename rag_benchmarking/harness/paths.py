@@ -28,6 +28,11 @@ for d in (DATA, RUNS, RESULTS):
 
 
 def add_root_to_path():
-    """Make the project's config/models importable from harness scripts."""
-    if str(ROOT) not in sys.path:
-        sys.path.insert(0, str(ROOT))
+    """Make the project's config/models importable from harness scripts.
+
+    core/ is added as well as the root: the modules in it import each other by
+    bare name, so `import config` only resolves if core/ is itself on the path.
+    """
+    for p in (ROOT, ROOT / "core"):
+        if str(p) not in sys.path:
+            sys.path.insert(0, str(p))

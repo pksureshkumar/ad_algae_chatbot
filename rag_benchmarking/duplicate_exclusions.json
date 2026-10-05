@@ -1,0 +1,24 @@
+{
+  "_why": "Eight papers were ingested twice, each under two filenames. Every pair has an identical chunk count and title, and the two copies share no chunk ids, so each occupies an independent set of chunks and competes with the other in every top-k retrieval. Surgical deletion via LightRAG's adelete_by_doc_id requires loading the 5 GB relationships store, which exceeds available RAM on this machine, so the duplicates are excluded at retrieval time instead. The index still physically contains them; anything rebuilding from it must apply this list.",
+  "_kept_copy_rationale": "The earlier-ingested copy is kept in each pair; it is also the one the rest of the project references (insights_microalgaebased_technologies.pdf is the source for two benchmark questions).",
+  "exclude": [
+    "1-s2.0-S001623612201403X-main.pdf",
+    "1-s2.0-S0360319925051365-main.pdf",
+    "1-s2.0-S2211926425004011-main.pdf",
+    "1-s2.0-S0960852425005577-main.pdf",
+    "1-s2.0-S2352186423004741-main.pdf",
+    "1-s2.0-S1385894724077404-main.pdf",
+    "1-s2.0-S0960852424017048-main (1).pdf",
+    "temporal-dynamics-and-contribution-of-phage-community-to-the-prevalence-of-antibiotic-resistance-genes-in-a-full-scale (1).pdf"
+  ],
+  "kept": [
+    "ad_food_waste_coupled.pdf",
+    "breaking_barriers_largescale_microalgae.pdf",
+    "digestate_dilution_shapes_carb.pdf",
+    "insights_microalgaebased_technologies.pdf",
+    "methane_production_enhancement_tetraselmis.pdf",
+    "upgrading_algae_waste_3d.pdf",
+    "1-s2.0-S0960852424017048-main.pdf",
+    "temporal-dynamics-and-contribution-of-phage-community-to-the-prevalence-of-antibiotic-resistance-genes-in-a-full-scale.pdf"
+  ]
+}

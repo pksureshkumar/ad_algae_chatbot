@@ -7,6 +7,7 @@ Usage:
     python query.py "..." --mode local --top-k 15
 """
 
+import _bootstrap  # noqa: F401  puts the repository root and core/ on sys.path
 import sys
 import asyncio
 import logging

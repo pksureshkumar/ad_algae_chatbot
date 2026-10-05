@@ -400,8 +400,9 @@
  {
   "filename": "exploring_sustainable_pathways_wastewater.pdf",
   "title": "Exploring Sustainable Pathways For Wastewater Treatment: A Comprehensive Investigation Of Various Routes",
-  "doi": null,
-  "year": "2024"
+  "doi": "10.21608/ijisd.2024.298056.1066",
+  "year": "2024",
+  "authors": "Yaser S., Abouseada N., Hammam M. et al."
  },
  {
   "filename": "extraction_degraded_proteins.pdf",
@@ -1082,25 +1083,18 @@
   "authors": "Soo A., Gao L., Shon H."
  },
  {
-  "filename": "1-s2.0-S001623612201403X-main.pdf",
-  "title": "Anaerobic digestion of food waste coupled with biogas upgrading in an outdoors algal-bacterial photobioreactor at pilot scale",
-  "doi": "10.1016/j.fuel.2022.124554",
-  "year": "2022",
-  "authors": "Marín D., Méndez L., Suero I. et al."
- },
- {
   "filename": "1-s2.0-S0032959201002308-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Recovery and treatment of Spirulina platensis cells cultured in a continuous photobioreactor to be used as food",
+  "doi": "10.1016/s0032-9592(01)00230-8",
+  "year": "2001",
+  "authors": "Morist A., Montesinos J., Cusidó J. et al."
  },
  {
   "filename": "1-s2.0-S004313540100522X-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Removal of ammonium and phosphorus ions from synthetic wastewater by the microalgae Chlorella vulgaris coimmobilized in alginate beads with the microalgae growth-promoting bacterium Azospirillum brasilense",
+  "doi": "10.1016/s0043-1354(01)00522-x",
+  "year": "2002",
+  "authors": "de-Bashan L."
  },
  {
   "filename": "1-s2.0-S0043135420307600-main.pdf",
@@ -1187,13 +1181,6 @@
   "authors": "Sánchez-Castro I., Martínez-Rodríguez P., Abad M. et al."
  },
  {
-  "filename": "1-s2.0-S0360319925051365-main.pdf",
-  "title": "Breaking the barriers towards large-scale microalgae-based bio-hydrogen production",
-  "doi": "10.1016/j.ijhydene.2025.152133",
-  "year": "2025",
-  "authors": "Koko I., Ibrahim E., Almomani F. et al."
- },
- {
   "filename": "1-s2.0-S0360544215014152-main.pdf",
   "title": "Pyrolytic cyanobacteria derived activated carbon as high performance electrode in symmetric supercapacitor",
   "doi": "10.1016/j.energy.2015.10.047",
@@ -1230,10 +1217,10 @@
  },
  {
   "filename": "1-s2.0-S096014812500758X-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Transformation of organic wastewater into biomethane using a bioelectrochemical system with varying applied voltages",
+  "doi": "10.1016/j.renene.2025.123096",
+  "year": "2025",
+  "authors": "Wang P., Zhang M., Yan T. et al."
  },
  {
   "filename": "1-s2.0-S0960148125016258-main.pdf",
@@ -1258,10 +1245,10 @@
  },
  {
   "filename": "1-s2.0-S0960852417304339-main.pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
+  "title": "Anaerobic co-digestion of microalgal biomass and wheat straw with and without thermo-alkaline pretreatment",
+  "doi": "10.1016/j.biortech.2017.03.151",
+  "year": "2017",
+  "authors": "Solé-Bundó M., Eskicioglu C., Garfí M. et al."
  },
  {
   "filename": "1-s2.0-S0960852420315637-main.pdf",
@@ -1299,13 +1286,6 @@
   "authors": "Hoyos E., Kuri R., Toda T. et al."
  },
  {
-  "filename": "1-s2.0-S0960852424017048-main (1).pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
- },
- {
   "filename": "1-s2.0-S0960852424017048-main.pdf",
   "title": "Enhancing electricity generation and pollutant degradation in microbial fuel cells using cyanobacteria-derived biochar electrodes",
   "doi": "10.1016/j.biortech.2024.132000",
@@ -1313,39 +1293,25 @@
   "authors": "Zhang W., Xu D., Zhao Y. et al."
  },
  {
-  "filename": "1-s2.0-S0960852425005577-main.pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
- },
- {
   "filename": "1-s2.0-S0960852425014890-main.pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
+  "title": "Evaluation of calcium alginate beads immobilization of Chlorella vulgaris for biomass production in space life support systems",
+  "doi": "10.1016/j.biortech.2025.133522",
+  "year": "2026",
+  "authors": "Mazzolini F., Carraro E., Peressini D. et al."
  },
  {
   "filename": "1-s2.0-S0960852426001458-main.pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
- },
- {
-  "filename": "1-s2.0-S1385894724077404-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Machine learning-based prediction of carbohydrate productivity in continuous cultivation of Chlorella vulgaris",
+  "doi": "10.1016/j.biortech.2026.134064",
+  "year": "2026",
+  "authors": "Ferro J., de Farias Silva C., da Gama B."
  },
  {
   "filename": "1-s2.0-S1385894725097578-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Production of polyhydroxyalkanoate from acetate by metabolically engineered Halomonas bluephagenesis",
+  "doi": "10.1016/j.cej.2025.168915",
+  "year": "2025",
+  "authors": "Ji M., Yang F., Zhang Z. et al."
  },
  {
   "filename": "1-s2.0-S1517838216306463-main.pdf",
@@ -1439,13 +1405,6 @@
   "authors": "Di Stefano G., Fagliarone C., Locato V. et al."
  },
  {
-  "filename": "1-s2.0-S2211926425004011-main.pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
- },
- {
   "filename": "1-s2.0-S2212982024001380-main.pdf",
   "title": "Fixation of high concentration CO2 using Chlorella – Bacteria symbiosis system",
   "doi": "10.1016/j.jcou.2024.102803",
@@ -1461,10 +1420,10 @@
  },
  {
   "filename": "1-s2.0-S2213343725038710-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Optimization of anaerobic wastewater effluent for efficient microalgal growth and biomacromolecules production: Lab-scale photobioreactor and machine learning performance",
+  "doi": "10.1016/j.jece.2025.119175",
+  "year": "2025",
+  "authors": "Arif M., Alsaiari M., Jalalah M. et al."
  },
  {
   "filename": "1-s2.0-S221455241730041X-main.pdf",
@@ -1488,13 +1447,6 @@
   "authors": "Vázquez-Romero B., Villar-Navarro E., Perales J. et al."
  },
  {
-  "filename": "1-s2.0-S2352186423004741-main.pdf",
-  "title": "Methane production enhancement from Tetraselmis biomass co-digestion using frying oil residue as co-substrate and ultrasonication as pretreatment",
-  "doi": "10.1016/j.eti.2023.103478",
-  "year": "2024",
-  "authors": "Feki F., Cherif M., Masmoudi M. et al."
- },
- {
   "filename": "1-s2.0-S2589014X23000853-main.pdf",
   "title": "Evaluation of the algal-derived biochar as an anode modifier in microbial fuel cells",
   "doi": "10.1016/j.biteb.2023.101414",
@@ -1503,10 +1455,10 @@
  },
  {
   "filename": "1-s2.0-S2589014X26000861-main.pdf",
-  "title": "Contents Lists Available at Sciencedirect",
-  "doi": "10.2139/ssrn.4417034",
-  "year": "2023",
-  "authors": "Wilson W., Haiges R., Christe K."
+  "title": "Machine learning enabled image-based novel growth monitoring system for microalgae cultivated in a customized photobioreactor",
+  "doi": "10.1016/j.biteb.2026.102628",
+  "year": "2026",
+  "authors": "Sambhwani L., Pandey H., Sirohi R. et al."
  },
  {
   "filename": "1-s2.0-S2590006424002588-main.pdf",
@@ -1517,15 +1469,15 @@
  },
  {
   "filename": "1-s2.0-S2666351122000158-main.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Design and development of advanced glucose biosensors via tuned interactions between marine polysaccharides and diagnostic elements – A survey",
+  "doi": "10.1016/j.sintl.2022.100170",
+  "year": "2022",
+  "authors": "Tummalapalli M., Singh S., Sanwaria S. et al."
  },
  {
   "filename": "10.22034_gjesm.2025.04.05.pdf",
   "title": "",
-  "doi": null,
+  "doi": "10.22034/gjesm.2025.04.05",
   "year": "",
   "authors": ""
  },
@@ -1643,10 +1595,10 @@
  },
  {
   "filename": "enhancing_methane_food_waste_fermentate.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Enhancing methane production from food waste fermentate using biochar: the added value of electrochemical testing in pre-selecting the most effective type of biochar",
+  "doi": "10.1186/s13068-017-0994-7",
+  "year": "2017",
+  "authors": "Cruz Viggi C., Simonetti S., Palma E. et al."
  },
  {
   "filename": "fbioe-09-794331.pdf",
@@ -1734,10 +1686,10 @@
  },
  {
   "filename": "s002849900267.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Effect of Gravity Changes on the Cyanobacterium Synechocystis sp. PCC 6803 750, optical density at 750 nm; PAGE, polyacrylamide gel electrophoresis; PMSF, phenylmethylsulfonyl fluoride; SDS, sodium dodecylsulfate; SM, salt-enriched medium. --&gt;",
+  "doi": "10.1007/s002849900267",
+  "year": "1997",
+  "authors": "Erdmann N., Effmert U., Fulda S. et al."
  },
  {
   "filename": "s10668-025-07177-1.pdf",
@@ -1755,17 +1707,17 @@
  },
  {
   "filename": "s11356-016-6224-1.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "Enhanced nutrient removal from municipal wastewater assisted by mixotrophic microalgal cultivation using glycerol",
+  "doi": "10.1007/s11356-016-6224-1",
+  "year": "2016",
+  "authors": "Gupta P., Choi H., Lee S."
  },
  {
   "filename": "s11356-018-1989-z.pdf",
-  "title": "",
-  "doi": null,
-  "year": "",
-  "authors": ""
+  "title": "A Leptolyngbya-based microbial consortium for agro-industrial wastewaters treatment and biodiesel production",
+  "doi": "10.1007/s11356-018-1989-z",
+  "year": "2018",
+  "authors": "Tsolcha O., Tekerlekopoulou A., Akratos C. et al."
  },
  {
   "filename": "s11356-022-23302-3.pdf",
@@ -1864,13 +1816,6 @@
   "doi": "10.1016/j.biortech.2010.09.017",
   "year": "2011",
   "authors": "Zamalloa C., Vulsteke E., Albrecht J. et al."
- },
- {
-  "filename": "temporal-dynamics-and-contribution-of-phage-community-to-the-prevalence-of-antibiotic-resistance-genes-in-a-full-scale (1).pdf",
-  "title": "Temporal Dynamics and Contribution of Phage Community to the Prevalence of Antibiotic Resistance Genes in a Full-Scale Sludge Anaerobic Digestion Plant",
-  "doi": "10.1021/acs.est.4c00712",
-  "year": "2024",
-  "authors": "Liu W., Xu C., Li T. et al."
  },
  {
   "filename": "temporal-dynamics-and-contribution-of-phage-community-to-the-prevalence-of-antibiotic-resistance-genes-in-a-full-scale.pdf",

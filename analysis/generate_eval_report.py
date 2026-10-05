@@ -2,11 +2,13 @@
 generate_eval_report.py — Produces evaluation_assessment.pdf in the project root.
 """
 
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 from pathlib import Path
 
-OUT = Path(__file__).parent / "evaluation_assessment.pdf"
+from _bootstrap import ROOT
+OUT = ROOT / "rag_benchmarking" / "design" / "evaluation_assessment.pdf"
 
 # ── Colour palette ────────────────────────────────────────────────────────────
 NAVY   = (26,  54,  93)
@@ -158,7 +160,7 @@ pdf.set_text_color(*DGRAY)
 pdf.multi_cell(0, 5.5,
     "This document reports the results of a corpus audit (v2, updated 2026-05-08) conducted "
     "against the indexed knowledge base as it stood in May 2026 (272 peer-reviewed papers; the "
-    "corpus has since grown to 282) to assess whether each "
+    "corpus is now 274 unique papers) to assess whether each "
     "proposed evaluation question can be fairly answered by the RAG chatbot. Q1 and Q3 have "
     "been revised since the first audit; a source DOI was also supplied for Q4. For each "
     "question we checked whether the expected answer values appear verbatim in the parsed "

@@ -15,7 +15,7 @@
     "id": "Q03",
     "stratum": "text-available",
     "leak": "3/5",
-    "notes": "leaked to body text: ['300', '6034', '2700']; value also in other papers: {'300': 182, '2700': 15, '0.03': 62, '0.18': 45}"
+    "notes": "leaked to body text: ['300', '6034', '2700']; value also in other papers: {'300': 181, '2700': 15, '0.03': 62, '0.18': 45}"
   },
   {
     "id": "Q04",
@@ -87,7 +87,7 @@
     "id": "Q15",
     "stratum": "table-exclusive",
     "leak": "0/3",
-    "notes": "value also in other papers: {'423': 46, '0.83': 16, '1.94': 9}"
+    "notes": "value also in other papers: {'423': 45, '0.83': 16, '1.94': 9}"
   },
   {
     "id": "Q16",

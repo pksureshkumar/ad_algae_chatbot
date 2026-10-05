@@ -15,7 +15,23 @@ import pickle
 
 import numpy as np
 
-from paths import VDB_NPY, VDB_PKL, CHUNKS_KV
+from paths import VDB_NPY, VDB_PKL, CHUNKS_KV, BENCH
+
+# Eight papers were ingested twice under two filenames each. Both copies are
+# physically in the index with independent chunks, so without this they compete
+# in every top-k retrieval and the corpus is effectively 274 papers presented as
+# 282. Deleting them properly needs LightRAG's adelete_by_doc_id, which has to
+# load the 5 GB relationships store and does not fit in this machine's RAM, so
+# they are excluded at query time. duplicate_exclusions.json records which copy
+# was kept in each pair and why.
+def _duplicate_exclusions():
+    path = BENCH / "duplicate_exclusions.json"
+    if not path.exists():
+        return set()
+    return set(json.loads(path.read_text(encoding="utf-8")).get("exclude", []))
+
+
+DUPLICATE_FILES = _duplicate_exclusions()
 
 # MinerU 3.4.4 emits "chart" as a distinct type; the original 272-paper ingest
 # (MinerU 2.x, Mar 2026) never produced it. Omitting it would let the text-only
@@ -73,6 +89,9 @@ class Index:
         by_content = np.array([is_multimodal_content(c) for c in self.contents])
         self.is_multimodal = by_type | by_content
 
+        # Duplicate copies are never retrievable, in any arm.
+        self.is_duplicate = np.isin(self.files, list(DUPLICATE_FILES)) if DUPLICATE_FILES             else np.zeros(len(self.files), dtype=bool)
+
         # Cross-store consistency. The mtime/row-count guards above compare the
         # vector store against itself, which is why they passed while five newly
         # ingested papers sat in the chunk store with no embeddings at all --
@@ -87,6 +106,11 @@ class Index:
             print(f"  {self.matrix.shape[0]} vectors (dim {self.dim}), "
                   f"{n} multimodal ({pct:.1%}) — {int(by_type.sum())} by type "
                   f"+ {extra} by embedded table markup", flush=True)
+            if self.is_duplicate.any():
+                n_files = len({f for f, d in zip(self.files, self.is_duplicate) if d})
+                print(f"  excluding {int(self.is_duplicate.sum())} chunks from "
+                      f"{n_files} duplicated papers (see duplicate_exclusions.json)",
+                      flush=True)
             if self.orphaned:
                 print(f"  WARNING: {len(self.orphaned)} chunks exist in the chunk "
                       f"store but have no vector and cannot be retrieved. "
@@ -112,6 +136,7 @@ class Index:
         q = np.asarray(query_vector, dtype=np.float32)
         q = q / (np.linalg.norm(q) + 1e-12)
         sims = self.matrix @ q
+        sims = np.where(self.is_duplicate, -np.inf, sims)
         if exclude_multimodal:
             sims = np.where(self.is_multimodal, -np.inf, sims)
         order = np.argsort(-sims)[:top_k]

@@ -5,7 +5,7 @@ citations.py — Paper metadata lookup and citation context for RAG responses.
 import json
 from pathlib import Path
 
-_META_PATH = Path(__file__).parent / "papers_metadata.json"
+_META_PATH = Path(__file__).resolve().parents[1] / "papers_metadata.json"
 _meta_by_filename: dict[str, dict] | None = None
 
 

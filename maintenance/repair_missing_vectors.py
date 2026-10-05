@@ -17,6 +17,7 @@ Usage:
     python repair_missing_vectors.py --dry-run
     python repair_missing_vectors.py
 """
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 import argparse
 import asyncio
 import base64
@@ -32,7 +33,7 @@ import numpy as np
 import _env  # noqa: F401
 from models import embedding_func
 
-STORAGE = Path(__file__).parent / "rag_storage"
+from _bootstrap import RAG_STORAGE as STORAGE
 CHUNKS_KV = STORAGE / "kv_store_text_chunks.json"
 VDB_JSON = STORAGE / "vdb_chunks.json"
 VDB_NPY = STORAGE / "vdb_chunks.npy"

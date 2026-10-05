@@ -14,7 +14,7 @@ import os
 import sys
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).resolve().parents[1]   # repository root, not core/
 
 # Windows consoles default to cp1252, which cannot encode the check marks, arrows
 # and em-dashes used in this project's status output. That is not cosmetic: the

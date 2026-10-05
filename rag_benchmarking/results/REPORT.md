@@ -7,7 +7,7 @@ All local arms use qwen3:14b at temperature 0.1 unless noted.
 
 | arm | gold chunk retrieved | values correct | mean accuracy | fabrications |
 |---|---|---|---|---|
-| `multimodal` | 14/16 | 38/53 | 0.729 | 0 |
+| `multimodal` | 14/16 | 41/53 | 0.762 | 0 |
 | `text_only` | 6/16 | 9/53 | 0.229 | 0 |
 | `no_retrieval` | n/a | 1/53 | 0.013 | n/a |
 | `gemma3_no_retrieval` | n/a | 2/53 | 0.023 | n/a |
@@ -29,13 +29,13 @@ specific to table-derived content rather than general retrieval superiority.
 | table-exclusive | 9 | `gemma3_no_retrieval` | n/a | 0/25 |
 | table-exclusive | 9 | `gpt_strict` | n/a | 0/25 |
 | table-exclusive | 9 | `gpt_websearch` | n/a | 23/25 |
-| mixed | 4 | `multimodal` | 4/4 | 15/17 |
+| mixed | 4 | `multimodal` | 4/4 | 17/17 |
 | mixed | 4 | `text_only` | 2/4 | 0/17 |
 | mixed | 4 | `no_retrieval` | n/a | 0/17 |
 | mixed | 4 | `gemma3_no_retrieval` | n/a | 1/17 |
 | mixed | 4 | `gpt_strict` | n/a | 0/17 |
 | mixed | 4 | `gpt_websearch` | n/a | 8/17 |
-| text-available | 3 | `multimodal` | 3/3 | 6/11 |
+| text-available | 3 | `multimodal` | 3/3 | 7/11 |
 | text-available | 3 | `text_only` | 3/3 | 6/11 |
 | text-available | 3 | `no_retrieval` | n/a | 1/11 |
 | text-available | 3 | `gemma3_no_retrieval` | n/a | 1/11 |
@@ -58,4 +58,4 @@ multimodal, 0 favour text-only, 8 discordant pairs, McNemar exact two-sided **p 
   accuracy would be higher on general questions; this is not a general
   capability assessment.
 - Three questions (Q01, Q05, Q07) miss the source paper in both retrieval arms.
-  They do not identify which of 282 similar papers they refer to.
+  They do not identify which of 274 similar papers they refer to.

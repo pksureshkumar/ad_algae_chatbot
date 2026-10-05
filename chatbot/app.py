@@ -7,6 +7,8 @@ Usage:
 Then open http://localhost:8000 in your browser.
 """
 
+import _bootstrap  # noqa: F401  puts the repository root and core/ on sys.path
+from _bootstrap import STATIC_DIR
 import fast_storage  # must be first — patches NanoVectorDB before LightRAG loads  # noqa: F401
 
 import logging
@@ -53,7 +55,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="AD & Algae Research Chatbot", lifespan=lifespan)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
 # ---------------------------------------------------------------------------
@@ -87,7 +89,7 @@ class ChatResponse(BaseModel):
 
 @app.get("/", include_in_schema=False)
 async def index():
-    return FileResponse("static/index.html")
+    return FileResponse(str(STATIC_DIR / "index.html"))
 
 
 @app.post("/api/chat", response_model=ChatResponse)

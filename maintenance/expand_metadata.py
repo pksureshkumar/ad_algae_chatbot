@@ -13,6 +13,7 @@ Usage:
     python expand_metadata.py --dry-run    # preview what's missing, no writes
 """
 
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 import argparse
 import difflib
 import json
@@ -28,8 +29,9 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-META_PATH = Path("papers_metadata.json")
-CHUNKS_PATH = Path("rag_storage/kv_store_text_chunks.json")
+from _bootstrap import PAPERS_METADATA as META_PATH
+from _bootstrap import RAG_STORAGE
+CHUNKS_PATH = RAG_STORAGE / "kv_store_text_chunks.json"
 CROSSREF_BASE = "https://api.crossref.org/works"
 USER_AGENT = "AD-Algae-Chatbot/1.0 (mailto:pavan@wustl.edu)"
 DELAY_S = 0.3

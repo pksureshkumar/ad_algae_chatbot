@@ -12,6 +12,7 @@ After migration, chat.py and app.py will automatically use the fast files.
 The original .json files are NOT deleted — they remain as the authoritative backup.
 """
 
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 import base64
 import json
 import pickle
@@ -20,7 +21,7 @@ from pathlib import Path
 
 import numpy as np
 
-RAG_STORAGE = Path("rag_storage")
+from _bootstrap import RAG_STORAGE
 VDB_FILES = ["vdb_chunks.json", "vdb_entities.json", "vdb_relationships.json"]
 
 

@@ -9,6 +9,7 @@ Options:
     --reset     Move the existing index aside and re-ingest everything from scratch
 """
 
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 import asyncio
 import json
 import logging

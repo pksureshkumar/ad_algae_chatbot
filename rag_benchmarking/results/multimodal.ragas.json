@@ -5,9 +5,9 @@
   "means": {
     "non_llm_context_precision_with_reference": 0.0937,
     "non_llm_context_recall": 0.125,
-    "id_based_context_precision": 0.3822,
+    "id_based_context_precision": 0.3833,
     "id_based_context_recall": 0.9375,
-    "faithfulness": 0.9785,
-    "answer_relevancy": 0.6573
+    "faithfulness": 0.9397,
+    "answer_relevancy": 0.727
   }
 }

@@ -10,6 +10,7 @@ In-session commands:
     quit / exit                 Exit
 """
 
+import _bootstrap  # noqa: F401  puts the repository root and core/ on sys.path
 import fast_storage  # must be first — patches NanoVectorDB before LightRAG loads  # noqa: F401
 
 import asyncio
@@ -81,7 +82,7 @@ async def main():
 
     print("\n" + "=" * 62)
     print("  Anaerobic Digestion & Algae Research Chatbot")
-    print("  Knowledge base: 282 peer-reviewed papers")
+    print("  Knowledge base: 274 peer-reviewed papers")
     print("  Powered by RAG-Anything + qwen3:14b + qwen2.5vl:32b")
     print("=" * 62)
     print("Type your question and press Enter.")

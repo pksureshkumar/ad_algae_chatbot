@@ -98,7 +98,7 @@ def main():
           "  accuracy would be higher on general questions; this is not a general",
           "  capability assessment.",
           "- Three questions (Q01, Q05, Q07) miss the source paper in both retrieval arms.",
-          "  They do not identify which of 282 similar papers they refer to.",
+          "  They do not identify which of 274 similar papers they refer to.",
           ""]
 
     out = RESULTS / "REPORT.md"

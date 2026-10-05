@@ -1,6 +1,6 @@
 # AD/Algae RAG Chatbot
 
-A retrieval-augmented chatbot over 282 peer-reviewed papers on **anaerobic digestion (AD),
+A retrieval-augmented chatbot over 274 peer-reviewed papers on **anaerobic digestion (AD),
 algae cultivation, and algae–AD integration**, together with the quantitative benchmark used to
 validate it.
 
@@ -27,9 +27,9 @@ here — see [License and scope](#license-and-scope).
 | Understand how the benchmark works | [`rag_benchmarking/README.md`](rag_benchmarking/README.md) |
 | See the questions and ground truth | [`rag_benchmarking/data/ground_truth_public.jsonl`](rag_benchmarking/data/ground_truth_public.jsonl) |
 | Run the chatbot | [Running the chatbot](#running-the-chatbot) |
-| Rebuild the index from papers | [`ingest.py`](ingest.py), and [Ingestion](#ingestion) |
+| Rebuild the index from papers | [`ingestion/ingest.py`](ingestion/ingest.py), and [Ingestion](#ingestion) |
 | See which papers are in the corpus | [`papers_metadata.json`](papers_metadata.json), [`rag_benchmarking/corpus_paper_list.csv`](rag_benchmarking/corpus_paper_list.csv) |
-| Change models or settings | [`config.py`](config.py) |
+| Change models or settings | [`core/config.py`](core/config.py) |
 
 ## Benchmark results at a glance
 
@@ -58,48 +58,76 @@ a full retrieved chunk). Those reasons are written into the spreadsheet itself.
 
 ## Repository layout
 
-Python modules stay flat at the repository root on purpose: they import each other by bare name
-(`import config`, `from models import ...`) and resolve data paths relative to the working
-directory, so moving them into packages breaks both.
+Each top-level folder is one job.
 
 ```
-├── app.py                  FastAPI web UI — the primary interface
-├── chat.py / query.py      interactive and single-shot CLI
-├── batch_query.py          60 permutations of research questions
+├── core/                   the library every other folder imports
+│   ├── config.py           all settings: models, paths, system prompt
+│   ├── models.py           async Ollama callables (LLM, embeddings, vision)
+│   ├── _env.py             env defaults that MUST precede any LightRAG import
+│   ├── fast_storage.py     loads vdb_*.npy/.pkl instead of parsing multi-GB JSON
+│   └── citations.py        maps retrieved chunks to papers for inline citations
 │
-├── config.py               all settings: models, paths, system prompt
-├── models.py               async Ollama callables (LLM, embeddings, vision)
-├── _env.py                 env defaults that MUST precede any LightRAG import
-├── fast_storage.py         loads vdb_*.npy/.pkl instead of parsing multi-GB JSON
-├── citations.py            maps retrieved chunks to papers for inline citations
-├── papers_metadata.json    282 records: filename, title, authors, year, DOI
+├── chatbot/                the interfaces you run to USE the system
+│   ├── app.py              FastAPI web UI — the primary interface
+│   ├── chat.py             interactive CLI
+│   ├── query.py            single-shot CLI
+│   ├── batch_query.py      60 permutations of research questions
+│   └── static/index.html   single-file web UI served by app.py
 │
-├── ingest.py               parse PDFs → rag_storage/   (resumable)
-├── reembed.py              swap the index to a new embedding model
-├── migrate_storage.py      vdb_*.json → .npy + .pkl for fast startup
-├── repair_missing_vectors.py  embed chunks that ingestion left unvectorised
+├── ingestion/
+│   └── ingest.py           parse PDFs → rag_storage/   (resumable)
 │
-├── enrich_metadata.py      backfill authors from CrossRef
-├── expand_metadata.py      find DOIs for papers missing from metadata
-├── extract_database.py     extract structured numerical data from the index
-├── generate_eval_report.py build the corpus-audit PDF
+├── maintenance/            index and metadata upkeep — all take --help
+│   ├── reembed.py          swap the index to a new embedding model
+│   ├── migrate_storage.py  vdb_*.json → .npy + .pkl for fast startup
+│   ├── repair_missing_vectors.py   embed chunks ingestion left unvectorised
+│   ├── enrich_metadata.py  backfill authors from CrossRef
+│   ├── expand_metadata.py  find DOIs for papers missing from metadata
+│   ├── backfill_missing_dois.py    recover DOIs via Elsevier PII + CrossRef
+│   ├── fix_bad_dois.py     correct DOIs mis-assigned from page headers
+│   └── deduplicate_corpus.py       remove papers ingested twice
 │
-├── static/index.html       single-file web UI served by app.py
+├── analysis/
+│   ├── extract_database.py         structured numerical data from the index
+│   └── generate_eval_report.py     the corpus-audit PDF
 │
-└── rag_benchmarking/       the benchmark — see its own README
-    ├── harness/            dataset build, screening, retrieval, scoring, export
-    ├── data/               the question set (public variant)
-    ├── runs_public/        every arm's retrieval and answers, chunk text removed
-    ├── results/            scores, RAGAS output, REPORT.md, the workbook
-    ├── pilot/              the five machine-proposed questions and the pilot run
-    ├── design/             earlier evaluation design and corpus audit
-    └── gpt_*_arm/          prompts and collected answers for the manual arms
+├── rag_benchmarking/       the six-arm benchmark — see its own README
+│   ├── harness/            dataset build, screening, retrieval, scoring, export
+│   ├── data/               the question set (public variant)
+│   ├── runs_public/        every arm's retrieval and answers, chunk text removed
+│   ├── results/            scores, RAGAS output, REPORT.md, the workbook
+│   ├── pilot/ · design/ · gpt_*_arm/
+│   └── duplicate_exclusions.json   papers ingested twice; excluded at query time
+│
+└── papers_metadata.json    274 records: filename, title, authors, year, DOI
 ```
 
-Not in this repository: `papers/` (the source PDFs), `rag_storage/` (the built index, ~14 GB), and
-the manuscript. All are gitignored with the reason stated inline.
+Not in this repository: `papers/` (the source PDFs), `rag_storage/` (the built
+index, ~14 GB), and the manuscript. All are gitignored with the reason inline.
 
----
+### How the imports work
+
+The five modules in `core/` import each other by bare name (`import config`,
+`from models import ...`). Every runnable folder therefore starts its files with:
+
+```python
+import _bootstrap  # noqa: F401
+```
+
+`_bootstrap.py` puts the repository root **and** `core/` on `sys.path`, and
+exposes `ROOT`, `RAG_STORAGE`, `PAPERS_METADATA`, `OUTPUT_DIR` and `STATIC_DIR`
+so nothing resolves paths from its own directory. There is a near-identical copy
+in each folder — it has to be local, since it is what makes importing work at
+all.
+
+### The corpus is 274 papers, the index holds 282 documents
+
+Eight papers were ingested twice under two filenames each. Deleting them from the
+index needs `adelete_by_doc_id`, which has to load the 5 GB relationships store
+and does not fit in this machine's RAM, so they are excluded at query time via
+`rag_benchmarking/duplicate_exclusions.json`. That file records which copy was
+kept in each pair. **Anything rebuilding from the index must apply it.**
 
 ## Setup
 
@@ -121,15 +149,15 @@ ingestion only. That drops the VRAM requirement from roughly 32 GB to about 11 G
 ## Running the chatbot
 
 ```bash
-uvicorn app:app --reload --port 8000     # then open http://localhost:8000
-python chat.py                           # interactive CLI
-python query.py "What are the benefits of co-digesting algae with AD?"
-python query.py "..." --mode local --top-k 15
+uvicorn app:app --app-dir chatbot --reload --port 8000   # http://localhost:8000
+python chatbot/chat.py                   # interactive CLI
+python chatbot/query.py "What are the benefits of co-digesting algae with AD?"
+python chatbot/query.py "..." --mode local --top-k 15
 ```
 
 The index holds 808,353 vectors (29,599 chunks, 167,876 entities, 610,878 relationships) and
 takes a few minutes to load even with `fast_storage`.
-`app.py` does this once, in its lifespan handler.
+`chatbot/app.py` does this once, in its lifespan handler.
 
 | mode | retrieves |
 |---|---|
@@ -143,8 +171,8 @@ Requires the source PDFs, which are not distributed here. `papers_metadata.json`
 the corpus can be obtained from the publishers.
 
 ```bash
-python ingest.py                             # index any PDFs in papers/ not already indexed
-PAPERS_DIR=/path/to/new python ingest.py     # index a different directory only
+python ingestion/ingest.py                              # index PDFs in papers/ not already indexed
+PAPERS_DIR=/path/to/new python ingestion/ingest.py      # index a different directory only
 ```
 
 Progress is saved after each file, so a run is interruptible and resumable. Expect roughly 45
@@ -153,8 +181,8 @@ figures, then LLM entity extraction.
 
 **Verify the index afterwards.** Ingestion can report success for every file while leaving chunks
 unvectorised — present in the knowledge base and unreachable by retrieval. That happened here to
-five papers, 1,329 chunks. `python repair_missing_vectors.py --dry-run` reports any such gap, and
-the same script repairs it.
+five papers, 1,329 chunks. `python maintenance/repair_missing_vectors.py --dry-run` reports any such gap,
+and the same script repairs it.
 
 ## Running the benchmark
 
@@ -177,7 +205,7 @@ install ragas alongside the chatbot's dependencies.
 ## Things worth knowing before changing anything
 
 **Import order is load-bearing.** `fast_storage` (or `_env`) must be imported before anything that
-pulls in LightRAG. `app.py` and `chat.py` do this on line 1. Moving it silently breaks UTF-8
+pulls in LightRAG. `chatbot/app.py` and `chatbot/chat.py` do this on line 1. Moving it silently breaks UTF-8
 output, the tiktoken cache pin and the rerank default.
 
 **`vlm_enhanced=False` is required on every `rag.aquery()` call.** Otherwise RAG-Anything routes
@@ -190,10 +218,10 @@ lazily inside RAG-Anything.
 **The embedding model and the index are coupled.** `rag_storage/` holds raw vectors, not
 text→vector mappings. Changing `OLLAMA_EMBEDDING_MODEL` without re-embedding either trips the
 dimension assertion or, if the dimensions happen to match, silently returns nonsense. Use
-`reembed.py`.
+`maintenance/reembed.py`.
 
 **`vdb_*.npy` must be at least as new as `vdb_*.json`**, or `fast_storage` silently falls back to
-the slow JSON path. `reembed.py` and `migrate_storage.py` both touch the `.npy` last.
+the slow JSON path. `maintenance/reembed.py` and `maintenance/migrate_storage.py` both touch the `.npy` last.
 
 **The LLM response cache is disabled deliberately.** It is a single JSON file loaded whole at
 startup that grows without bound; it reached 1.55 GB here and then failed with `MemoryError`, and a

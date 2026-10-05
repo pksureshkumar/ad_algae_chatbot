@@ -14,8 +14,8 @@ every arm, all questions and answers, with the caveats written into the sheet. T
 
 | arm | gold chunk retrieved | values recovered | mean accuracy | faithfulness | asserted numbers with no gold value |
 |---|---|---|---|---|---|
-| **multimodal** | **14/16** | **38/53** | **0.729** | **0.979** | 1 |
-| `text_only` | 6/16 | 9/53 | 0.229 | 0.788 | 4 |
+| **multimodal** | **14/16** | **41/53** | **0.762** | **0.940** | 0 |
+| `text_only` | 6/16 | 9/53 | 0.229 | 0.765 | 2 |
 | `no_retrieval` (qwen3:14b) | n/a | 1/53 | 0.013 | n/a | 10 |
 | `gemma3_no_retrieval` | n/a | 2/53 | 0.023 | n/a | 7 |
 | `gpt_strict` (Astra, no retrieval) | n/a | 0/53 | 0.000 | n/a | 0 |
@@ -26,11 +26,11 @@ Paired tests against `multimodal`, McNemar exact:
 | versus | unit | split | p |
 |---|---|---|---|
 | `text_only` | gold chunk | 8–0 | **0.0078** |
-| `text_only` | gold values | 30–1 | **<0.0001** |
-| `no_retrieval` | gold values | 38–1 | **<0.0001** |
-| `gemma3_no_retrieval` | gold values | 37–1 | **<0.0001** |
-| `gpt_strict` | gold values | 38–0 | **<0.0001** |
-| `gpt_websearch` | gold values | 11–10 | 1.00 — no detectable difference |
+| `text_only` | gold values | 33–1 | **<0.0001** |
+| `no_retrieval` | gold values | 41–1 | **<0.0001** |
+| `gemma3_no_retrieval` | gold values | 40–1 | **<0.0001** |
+| `gpt_strict` | gold values | 41–0 | **<0.0001** |
+| `gpt_websearch` | gold values | 14–10 | 0.54 — no detectable difference |
 
 Three readings worth stating plainly. Withholding table and figure chunks from an otherwise
 identical system costs it more than half its retrieval and three quarters of its answers.
@@ -94,7 +94,7 @@ bash run_all_ragas.sh        # all six arms, sequentially
 ├── design/             earlier 90-question design and the May 2026 corpus audit
 ├── gpt_strict_arm/     prompts and collected answers, browsing suppressed
 ├── gpt_websearch_arm/  prompts and collected answers, browsing on
-└── corpus_paper_list.csv   the 282 indexed papers with DOIs
+└── corpus_paper_list.csv   the 274 indexed papers with DOIs
 ```
 
 ## Things that will bite you
@@ -130,8 +130,8 @@ threshold, so they sit near zero mechanically. Use the `id_based_*` metrics for 
 `id_based_context_recall` reproduces `score.py`'s paper-level figure exactly, which is a useful
 independent check.
 
-**LLM-judged metrics are not deterministic.** Faithfulness for `multimodal` came out 0.930 and
-then 0.979 on identical data with the same judge. Lead with the deterministic metrics.
+**LLM-judged metrics are not deterministic.** Faithfulness for `multimodal` came out 0.930, 0.979 and 0.940
+across runs on near-identical data with the same judge. Lead with the deterministic metrics.
 
 ## Strata
 
@@ -152,8 +152,8 @@ general retrieval superiority.
 
 Pinning one passage per question measures **known-item retrieval**: we know the answer is in chunk
 C, did the system find chunk C? That is a lower bound on retrieval failure, not exhaustive recall —
-measuring true recall would require annotating every relevant passage across all 282 papers.
+measuring true recall would require annotating every relevant passage across all 274 papers.
 Report it as gold-passage retrieval success at *k*, not as "recall".
 
-Three questions (Q01, Q05, Q07) do not identify which of 282 similar papers they refer to; GPT-6
+Three questions (Q01, Q05, Q07) do not identify which of 274 similar papers they refer to; GPT-6
 Astra said so explicitly for Q01. They are retained and reported rather than dropped.

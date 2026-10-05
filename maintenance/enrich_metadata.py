@@ -9,6 +9,7 @@ Usage:
     python enrich_metadata.py --dry-run    # preview what would be updated
 """
 
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 import argparse
 import json
 import sys
@@ -22,7 +23,7 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-META_PATH = Path(__file__).parent / "papers_metadata.json"
+from _bootstrap import PAPERS_METADATA as META_PATH
 CROSSREF_BASE = "https://api.crossref.org/works/"
 USER_AGENT = "AD-Algae-Chatbot/1.0 (mailto:pavan@wustl.edu)"
 DELAY_S = 0.25  # polite rate — CrossRef asks for < 50 req/s

@@ -4,6 +4,7 @@ batch_query.py — Run all permutations of research questions and save to output
 Initializes RAGAnything once, then loops through all queries.
 """
 
+import _bootstrap  # noqa: F401  puts the repository root and core/ on sys.path
 import asyncio
 import logging
 import textwrap
@@ -18,7 +19,7 @@ from config import RAG_CONFIG, DEFAULT_TOP_K, DEFAULT_SEARCH_MODE, LIGHTRAG_KWAR
 from models import llm_model_func, embedding_func, vision_model_func
 
 EXCERPT_LEN = 300
-OUTPUT_DIR = Path(__file__).parent / "output"
+from _bootstrap import OUTPUT_DIR
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # --- Question templates (use {process} as placeholder) ---

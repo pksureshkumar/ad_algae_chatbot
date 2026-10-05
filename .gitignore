@@ -62,5 +62,10 @@ rag_benchmarking/results/*.ragas.csv
 rag_benchmarking/ground_truth_final.xlsx
 rag_benchmarking/ground_truth_template_updated.xlsx
 rag_benchmarking/data/ground_truth.jsonl
-eval/ground_truth_paloma_20260926.xlsx
-eval/ground_truth_template_blank.xlsx
+rag_benchmarking/ground_truth_paloma_20260926.xlsx
+rag_benchmarking/ground_truth_template_blank.xlsx
+
+# metadata snapshots taken before each repair step
+papers_metadata.json.pre-*
+papers_metadata.json.bak
+rag_storage_predup_backup/

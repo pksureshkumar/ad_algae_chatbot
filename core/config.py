@@ -5,7 +5,7 @@ from pathlib import Path
 
 from raganything import RAGAnythingConfig
 
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).resolve().parents[1]   # repository root, not core/
 PAPERS_DIR = Path(os.getenv("PAPERS_DIR", BASE_DIR / "papers"))
 # Overridable so a trial ingest can be pointed at a scratch directory without
 # risking the real index.
@@ -73,7 +73,7 @@ LIGHTRAG_KWARGS = {
 DOMAIN_SYSTEM_PROMPT = (
     "You are an expert scientific assistant specialising in anaerobic digestion (AD), "
     "algae cultivation, and the integration of algae with anaerobic digestion systems. "
-    "You have access to a comprehensive knowledge base of 282 peer-reviewed papers on "
+    "You have access to a comprehensive knowledge base of 274 peer-reviewed papers on "
     "these topics.\n\n"
     "When answering:\n"
     "- Ground your response in the retrieved literature; cite specific findings, "

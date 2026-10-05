@@ -15,6 +15,7 @@ Usage:
     python extract_database.py --reset          # clear checkpoint and re-run
 """
 
+import _bootstrap  # noqa: F401  puts the project root on sys.path
 import asyncio
 import json
 import argparse
@@ -31,7 +32,7 @@ from config import RAG_STORAGE_DIR
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-OUTPUT_DIR = Path(__file__).parent / "output"
+from _bootstrap import OUTPUT_DIR
 OUTPUT_DIR.mkdir(exist_ok=True)
 OUTPUT_XLSX = OUTPUT_DIR / "database_extraction.xlsx"
 CHECKPOINT_FILE = OUTPUT_DIR / "extraction_checkpoint.json"
@@ -356,7 +357,7 @@ async def main(papers: list[str], reset: bool = False):
     logger.info("Loading rag_storage chunks...")
     all_chunks = json.loads((RAG_STORAGE_DIR / "kv_store_text_chunks.json").read_text())
 
-    meta_path = Path(__file__).parent / "papers_metadata.json"
+    from _bootstrap import PAPERS_METADATA as meta_path
     meta_list = json.loads(meta_path.read_text())
     meta_lookup = {r["filename"]: r for r in meta_list}
 
