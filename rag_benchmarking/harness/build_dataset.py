@@ -58,7 +58,7 @@ def load_pilot(start_index):
 
     These five were constructed mechanically from table-exclusive values and
     verified against the index before the co-authors' set existed. They live in
-    eval/pilot_goldset.json rather than the spreadsheet, so they have to be
+    pilot/pilot_goldset.json rather than the spreadsheet, so they have to be
     merged explicitly -- leaving them out silently costs five questions in the
     table-exclusive stratum, which is the thinnest one.
 
@@ -66,8 +66,8 @@ def load_pilot(start_index):
     domain expert. Recorded as annotator "PILOT" so that distinction survives
     into the results and can be stated in the methods.
     """
-    from paths import ROOT
-    pilot_path = ROOT / "eval" / "pilot_goldset.json"
+    from paths import BENCH, ROOT
+    pilot_path = BENCH / "pilot" / "pilot_goldset.json"
     if not pilot_path.exists():
         print(f"  (no pilot set at {pilot_path}, skipping)")
         return []
