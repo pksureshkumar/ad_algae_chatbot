@@ -38,16 +38,17 @@ caveats and paired tests in the workbook above.
 
 | arm | gold chunk retrieved | gold values recovered (of 53) | faithfulness |
 |---|---|---|---|
-| **multimodal RAG** (this system) | **14/16** | **38** | **0.979** |
-| text-only RAG (identical, tables/figures withheld) | 6/16 | 9 | 0.788 |
+| **multimodal RAG** (this system) | **14/16** | **41** | **0.940** |
+| text-only RAG (identical, tables/figures withheld) | 6/16 | 9 | 0.765 |
 | `qwen3:14b`, no retrieval | n/a | 1 | n/a |
 | `gemma3:27b`, no retrieval | n/a | 2 | n/a |
 | GPT-6 Astra, no retrieval | n/a | 0 | n/a |
 | GPT-6 Astra + web search | n/a | 37 | n/a |
 
 Multimodal versus text-only: p = 0.0078 on gold-chunk retrieval, p < 0.0001 on values (McNemar
-exact). Against a frontier model with live web access the difference is not detectable (p = 1.00) —
-a 14B model running locally over a curated, citable corpus performs comparably.
+exact). Against a frontier model with live web access the difference is not detectable
+(14–10 discordant, p = 0.54) — a 14B model running locally over a curated, citable corpus
+performs comparably.
 
 Two metrics in the workbook are flagged and should not be read at face value: `answer_relevancy`
 rewards confident wrong answers and ranks the weakest arm highest, and the `non_llm_context_*`
