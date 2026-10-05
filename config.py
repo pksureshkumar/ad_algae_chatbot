@@ -73,7 +73,7 @@ LIGHTRAG_KWARGS = {
 DOMAIN_SYSTEM_PROMPT = (
     "You are an expert scientific assistant specialising in anaerobic digestion (AD), "
     "algae cultivation, and the integration of algae with anaerobic digestion systems. "
-    "You have access to a comprehensive knowledge base of 272 peer-reviewed papers on "
+    "You have access to a comprehensive knowledge base of 282 peer-reviewed papers on "
     "these topics.\n\n"
     "When answering:\n"
     "- Ground your response in the retrieved literature; cite specific findings, "

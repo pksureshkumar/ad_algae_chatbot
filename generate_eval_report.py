@@ -157,7 +157,8 @@ pdf.set_font("Arial", "", 9.5)
 pdf.set_text_color(*DGRAY)
 pdf.multi_cell(0, 5.5,
     "This document reports the results of a corpus audit (v2, updated 2026-05-08) conducted "
-    "against the indexed knowledge base (272 peer-reviewed papers) to assess whether each "
+    "against the indexed knowledge base as it stood in May 2026 (272 peer-reviewed papers; the "
+    "corpus has since grown to 282) to assess whether each "
     "proposed evaluation question can be fairly answered by the RAG chatbot. Q1 and Q3 have "
     "been revised since the first audit; a source DOI was also supplied for Q4. For each "
     "question we checked whether the expected answer values appear verbatim in the parsed "
@@ -168,11 +169,11 @@ pdf.ln(2)
 # ── Q1 ────────────────────────────────────────────────────────────────────────
 pdf.q_header("Q1", "Highest methane yield from anaerobic co-digestion with algal biomass (corpus-wide synthesis)")
 pdf.badge("OK", "GOOD — KEEP", GREEN)
-pdf.kv("Question type", "Corpus-wide synthesis — find the maximum reported value across 272 papers")
+pdf.kv("Question type", "Corpus-wide synthesis — find the maximum reported value across the corpus")
 pdf.kv("Source paper", "Not pinned to a single DOI; answer depends on what the corpus contains")
 pdf.kv("RAG suitability", "Appropriate — hybrid mode retrieves top-k chunks on methane yield; LLM synthesises")
 pdf.body(
-    "This is a well-designed synthesis question. The corpus contains 272 papers on algae-AD "
+    "This is a well-designed synthesis question. The corpus contained 272 papers on algae-AD "
     "integration, many reporting methane yields for co-digestion experiments. The RAG chatbot "
     "will retrieve the most semantically relevant chunks and attempt to identify the highest "
     "reported value along with the associated co-substrate, species, and operating conditions."
@@ -249,7 +250,7 @@ pdf.body(
     "The 98.9% CH4 purity figure is confirmed in the indexed corpus and will be retrievable. "
     "However, the DOI provided for the PSA comparison (10.1016/j.cej.2022.138323) corresponds "
     "to a paper that is cited by other indexed papers but is not itself in the knowledge base. "
-    "The 83.3% and 123.5% figures do not appear anywhere in the 272-paper index. The chatbot "
+    "The 83.3% and 123.5% figures do not appear anywhere in the index as audited. The chatbot "
     "may give a reasonable qualitative answer about HRAP vs PSA trade-offs from related papers, "
     "but cannot retrieve these specific quantitative values."
 )

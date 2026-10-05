@@ -96,7 +96,7 @@ directory, so moving them into packages breaks both.
     └── gpt_*_arm/          prompts and collected answers for the manual arms
 ```
 
-Not in this repository: `papers/` (the source PDFs), `rag_storage/` (the built index, ~13 GB), and
+Not in this repository: `papers/` (the source PDFs), `rag_storage/` (the built index, ~14 GB), and
 the manuscript. All are gitignored with the reason stated inline.
 
 ---
@@ -127,7 +127,8 @@ python query.py "What are the benefits of co-digesting algae with AD?"
 python query.py "..." --mode local --top-k 15
 ```
 
-The index holds roughly 806k vectors and takes a few minutes to load even with `fast_storage`.
+The index holds 808,353 vectors (29,599 chunks, 167,876 entities, 610,878 relationships) and
+takes a few minutes to load even with `fast_storage`.
 `app.py` does this once, in its lifespan handler.
 
 | mode | retrieves |

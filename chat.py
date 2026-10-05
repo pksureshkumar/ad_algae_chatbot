@@ -81,7 +81,7 @@ async def main():
 
     print("\n" + "=" * 62)
     print("  Anaerobic Digestion & Algae Research Chatbot")
-    print("  Knowledge base: ~272 peer-reviewed papers")
+    print("  Knowledge base: 282 peer-reviewed papers")
     print("  Powered by RAG-Anything + qwen3:14b + qwen2.5vl:32b")
     print("=" * 62)
     print("Type your question and press Enter.")
