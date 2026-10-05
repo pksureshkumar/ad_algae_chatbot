@@ -4,7 +4,7 @@
 # Generated RAG index (rebuild with ingest.py)
 rag_storage/
 
-# Claude Code session files
+# Local-only: AI assistant session files and internal project notes
 .claude/
 CLAUDE.md
 
