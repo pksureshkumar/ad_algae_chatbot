@@ -655,16 +655,16 @@
   <div class="setting-group">
     <div class="setting-label">Search Mode</div>
     <div class="mode-options" id="mode-opts">
-      <label class="mode-option active" data-mode="hybrid">
-        <input type="radio" name="mode" value="hybrid" checked />
+      <label class="mode-option" data-mode="hybrid">
+        <input type="radio" name="mode" value="hybrid" />
         <div class="mode-radio"></div>
         <div class="mode-info">
           <div class="mode-name">Hybrid</div>
           <div class="mode-desc">Local + global context</div>
         </div>
       </label>
-      <label class="mode-option" data-mode="local">
-        <input type="radio" name="mode" value="local" />
+      <label class="mode-option active" data-mode="local">
+        <input type="radio" name="mode" value="local" checked />
         <div class="mode-radio"></div>
         <div class="mode-info">
           <div class="mode-name">Local</div>
@@ -682,13 +682,16 @@
     </div>
   </div>
 
-  <!-- Top-K -->
+  <!-- Top-K: LightRAG's top_k counts graph items, not text chunks. It is
+       entities in local mode and relationships in global mode; the number of
+       text chunks passed to the model is governed separately by chunk_top_k. -->
   <div class="setting-group">
     <div class="topk-row">
-      <div class="setting-label">Retrieved Chunks</div>
+      <div class="setting-label" id="topk-label">Retrieved Entities</div>
       <span class="topk-value" id="topk-val">10</span>
     </div>
     <input type="range" id="topk" min="3" max="25" value="10" step="1" />
+    <div class="mode-desc">Graph items matched per query; source text chunks are capped separately.</div>
   </div>
 
   <!-- Stats -->
@@ -748,7 +751,7 @@
 
 <script>
 /* ─── State ─────────────────────────────────── */
-const state = { mode: 'hybrid', topK: 10, busy: false };
+const state = { mode: 'local', topK: 10, busy: false };
 
 /* ─── DOM ───────────────────────────────────── */
 const chatEl   = document.getElementById('chat');
@@ -756,6 +759,15 @@ const queryEl  = document.getElementById('query');
 const sendEl   = document.getElementById('send');
 const topkEl   = document.getElementById('topk');
 const topkVal  = document.getElementById('topk-val');
+const topkLbl  = document.getElementById('topk-label');
+
+/* top_k selects entities in local mode and relationships in global mode, so the
+   label tracks the mode rather than naming one of them for all three. */
+const TOPK_LABELS = {
+  local:  'Retrieved Entities',
+  global: 'Retrieved Relations',
+  hybrid: 'Entities + Relations',
+};
 
 /* ─── marked config ─────────────────────────── */
 marked.setOptions({ breaks: true, gfm: true });
@@ -772,6 +784,7 @@ document.querySelectorAll('.mode-option').forEach(opt => {
     opt.classList.add('active');
     state.mode = opt.dataset.mode;
     opt.querySelector('input').checked = true;
+    topkLbl.textContent = TOPK_LABELS[state.mode];
   });
 });
 
